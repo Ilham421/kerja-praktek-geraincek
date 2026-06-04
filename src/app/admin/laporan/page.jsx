@@ -147,6 +147,7 @@ function LaporanContent() {
         <h1 className="text-2xl font-bold text-slate-800">📊 Laporan Pendapatan</h1>
         <button 
           onClick={handleDownloadReport}
+          suppressHydrationWarning
           className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-indigo-700 transition shadow-lg shadow-indigo-100 flex items-center gap-2"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

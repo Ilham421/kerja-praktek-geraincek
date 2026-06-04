@@ -1,8 +1,7 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
-  "/favicon.ico/route": "app/favicon.ico/route.js",
   "/api/servis/route": "app/api/servis/route.js",
   "/api/auth/me/route": "app/api/auth/me/route.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
   "/admin/laporan/page": "app/admin/laporan/page.js",
   "/admin/page": "app/admin/page.js"
 }

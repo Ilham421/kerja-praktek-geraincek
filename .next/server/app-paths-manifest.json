@@ -1,15 +1,13 @@
 {
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/api/auth/me/route": "app/api/auth/me/route.js",
+  "/api/users/route": "app/api/users/route.js",
+  "/api/auth/logout/route": "app/api/auth/logout/route.js",
+  "/api/auth/login/route": "app/api/auth/login/route.js",
   "/api/products/route": "app/api/products/route.js",
   "/api/servis/route": "app/api/servis/route.js",
-  "/api/users/route": "app/api/users/route.js",
-  "/api/servis/status/[nota]/route": "app/api/servis/status/[nota]/route.js",
-  "/stok/page": "app/stok/page.js",
-  "/cek-status/page": "app/cek-status/page.js",
-  "/page": "app/page.js",
-  "/layanan/page": "app/layanan/page.js",
-  "/admin/laporan/page": "app/admin/laporan/page.js",
+  "/login/page": "app/login/page.js",
   "/admin/users/page": "app/admin/users/page.js",
+  "/admin/laporan/page": "app/admin/laporan/page.js",
   "/admin/page": "app/admin/page.js"
 }

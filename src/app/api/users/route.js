@@ -120,7 +120,6 @@ export async function PATCH(request) {
 
     // ✅ Update role saja (cara lama - toggle role)
     if (role && !username && !password) {
-      // Proteksi tambahan
       if (parseInt(id) === auth.id) {
         return NextResponse.json({ error: "Tidak bisa mengubah role sendiri" }, { status: 400 });
       }
@@ -128,7 +127,7 @@ export async function PATCH(request) {
       return NextResponse.json({ message: "Role berhasil diperbarui" });
     }
 
-    // ✅ Update username saja (kalau ada username tapi tidak ada role & password kosong)
+    // ✅ Update username saja
     if (username && !role && (!password || password.trim() === "")) {
       await db.query("UPDATE users SET username = ? WHERE id = ?", [username, id]);
       return NextResponse.json({ message: "Username berhasil diperbarui" });
@@ -145,7 +144,7 @@ export async function PATCH(request) {
   }
 }
 
-// ✅ DELETE: Hapus user (hanya superadmin)
+// ✅ DELETE: Hapus user (dengan session variable untuk trigger)
 export async function DELETE(request) {
   const auth = await getAuth(request);
   if (!auth || auth.role !== 'superadmin') {
@@ -171,6 +170,9 @@ export async function DELETE(request) {
       return NextResponse.json({ error: "User tidak ditemukan" }, { status: 404 });
     }
 
+    // ✅ SET session variable untuk trigger DELETE
+    await db.query("SET @current_user_id = ?", [auth.id]);
+    
     await db.query("DELETE FROM users WHERE id = ?", [id]);
     return NextResponse.json({ message: "User berhasil dihapus" });
   } catch (error) {

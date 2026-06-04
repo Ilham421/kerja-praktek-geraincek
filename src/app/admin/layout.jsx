@@ -18,7 +18,7 @@ function AdminHeader({
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Effect untuk menampilkan pesan akses ditolak atau sesi berakhir (Pindahan dari Layout)
+  // Effect untuk menampilkan pesan akses ditolak atau sesi berakhir
   useEffect(() => {
     if (searchParams.get('accessDenied') === 'true') {
       Swal.fire({
@@ -27,7 +27,6 @@ function AdminHeader({
         icon: 'error',
         confirmButtonColor: '#ef4444',
       });
-      // Hapus query parameter agar pesan tidak muncul lagi saat refresh
       const newSearchParams = new URLSearchParams(searchParams.toString());
       newSearchParams.delete('accessDenied');
       router.replace(`${pathname}?${newSearchParams.toString()}`, undefined, { shallow: true });
@@ -157,11 +156,9 @@ export default function AdminLayout({ children }) {
       if (!result.isConfirmed) return;
     }
 
-    // Panggil API Logout untuk hapus HttpOnly Cookie
     const res = await fetch("/api/auth/logout", { method: "POST" });
     if (res.ok) {
       router.push("/login");
-      // Refresh untuk memastikan middleware menendang user keluar
       setTimeout(() => router.refresh(), 100); 
     }
   };
@@ -193,10 +190,9 @@ export default function AdminLayout({ children }) {
       });
 
       if (res.ok) {
-        // Jika password diisi (artinya password diubah)
         if (formValues.password && formValues.password.trim() !== "") {
           await Swal.fire("Berhasil!", "Password diubah. Silakan login kembali.", "success");
-          handleLogout(false); // Logout otomatis tanpa konfirmasi lagi
+          handleLogout(false);
         } else {
           Swal.fire("Berhasil!", "Profil telah diperbarui.", "success");
           fetch("/api/auth/me").then(r => r.json()).then(d => setUser(d));
@@ -212,7 +208,8 @@ export default function AdminLayout({ children }) {
     { name: "Dashboard", href: "/admin", icon: "📊" },
     ...(user?.role === 'superadmin' ? [
       { name: "Manajemen User", href: "/admin/users", icon: "👥" },
-      { name: "Laporan", href: "/admin/laporan", icon: "📈" } // Menu Laporan hanya untuk Superadmin
+      { name: "Laporan", href: "/admin/laporan", icon: "📈" },
+      { name: "Log Aktivitas", href: "/admin/log", icon: "📋" }, // ⬅️ MENU BARU: LOG
     ] : [])
   ];
 

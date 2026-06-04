@@ -218,12 +218,12 @@ export default function AdminDashboard() {
   const handleEditProduct = (product) => {
     setEditingProductId(product.id);
     setProductForm({
-      nama_barang: product.nama_barang,
-      kategori: product.kategori,
-      harga: product.harga,
-      stok_jumlah: product.stok_jumlah,
-      link_shopee: product.link_shopee,
-      gambar_url: product.gambar_url
+      nama_barang: product.nama_barang || "",
+      kategori: product.kategori || "Handphone",
+      harga: product.harga || "",
+      stok_jumlah: product.stok_jumlah ?? "",
+      link_shopee: product.link_shopee || "",
+      gambar_url: product.gambar_url || ""
     });
   };
 

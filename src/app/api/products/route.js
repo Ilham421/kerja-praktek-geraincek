@@ -1,13 +1,27 @@
 import { NextResponse } from "next/server";
 import db from "@/app/lib/db";
-import { writeFile, mkdir } from "fs/promises";
+import { jwtVerify } from "jose";
+import fs from "fs";
 import path from "path";
-import crypto from "crypto";
 
+async function getAuth(request) {
+  const token = request.cookies.get("admin_token")?.value;
+  if (!token) return null;
+  try {
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET || "rahasia-ncek-123");
+    const { payload } = await jwtVerify(token, secret);
+    return payload;
+  } catch (err) {
+    return null;
+  }
+}
+
+// ✅ GET: Ambil semua produk (publik)
 export async function GET() {
   try {
-    // Mengambil semua data produk, diurutkan dari yang terbaru
-    const [rows] = await db.query("SELECT * FROM products ORDER BY id DESC");
+    const [rows] = await db.query(
+      "SELECT p.*, u.username as created_by_name FROM products p LEFT JOIN users u ON p.created_by = u.id ORDER BY p.id DESC"
+    );
     return NextResponse.json(rows || []);
   } catch (error) {
     console.error("[PRODUCTS_GET]", error);
@@ -15,101 +29,133 @@ export async function GET() {
   }
 }
 
+// ✅ POST: Tambah produk (SuperAdmin only, dengan created_by)
 export async function POST(request) {
+  const auth = await getAuth(request);
+  if (!auth || auth.role !== 'superadmin') {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   try {
-    const data = await request.formData();
-    const file = data.get("file");
-    let gambar_url = data.get("gambar_url");
+    const formData = await request.formData();
+    const nama_barang = formData.get("nama_barang");
+    const kategori = formData.get("kategori");
+    const harga = formData.get("harga");
+    const stok_jumlah = formData.get("stok_jumlah");
+    const link_shopee = formData.get("link_shopee") || null;
+    let gambar_url = formData.get("gambar_url") || null;
+    const file = formData.get("file");
 
-    // Jika ada file yang diunggah, proses hashing nama file
-    if (file && typeof file !== "string") {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-
-      const ext = path.extname(file.name);
-      const hash = crypto.randomBytes(16).toString("hex");
-      const filename = `${hash}${ext}`;
-      
-      const uploadDir = path.join(process.cwd(), "public", "uploads");
-      
-      // Pastikan folder uploads ada
-      await mkdir(uploadDir, { recursive: true });
-      
-      const filePath = path.join(uploadDir, filename);
-      await writeFile(filePath, buffer);
-      
-      // Simpan path relatif untuk DB
-      gambar_url = `/uploads/${filename}`;
+    // Validasi
+    if (!nama_barang || !kategori || !harga) {
+      return NextResponse.json({ error: "Data tidak lengkap" }, { status: 400 });
     }
 
-    const nama_barang = data.get("nama_barang");
-    const kategori = data.get("kategori");
-    const harga = data.get("harga");
-    const stok_jumlah = data.get("stok_jumlah");
-    const link_shopee = data.get("link_shopee");
+    // Upload file jika ada
+    if (file && file.size > 0) {
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const fileName = `${Date.now()}-${file.name}`;
+      const uploadDir = path.join(process.cwd(), "public", "uploads");
+      
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
+      
+      fs.writeFileSync(path.join(uploadDir, fileName), buffer);
+      gambar_url = `/uploads/${fileName}`;
+    }
 
+    // ✅ Insert dengan created_by (trigger akan auto-log)
     const [result] = await db.query(
-      "INSERT INTO products (nama_barang, kategori, harga, stok_jumlah, link_shopee, gambar_url) VALUES (?, ?, ?, ?, ?, ?)",
-      [nama_barang, kategori, harga, stok_jumlah, link_shopee, gambar_url]
+      "INSERT INTO products (nama_barang, kategori, harga, stok_jumlah, link_shopee, gambar_url, created_by) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      [nama_barang, kategori, harga, stok_jumlah || 0, link_shopee, gambar_url, auth.id]
     );
 
-    return NextResponse.json({ id: result.insertId, message: "Produk berhasil ditambahkan" }, { status: 201 });
+    return NextResponse.json({ 
+      id: result.insertId, 
+      message: "Produk berhasil ditambahkan" 
+    }, { status: 201 });
+
   } catch (error) {
-    console.error("[PRODUCTS_POST]", error);
-    return NextResponse.json({ error: "Gagal menambahkan produk" }, { status: 500 });
+    console.error("[PRODUCTS_POST_ERROR]", error);
+    return NextResponse.json({ error: "Gagal menambah produk" }, { status: 500 });
   }
 }
 
+// ✅ PUT: Update produk (SuperAdmin only, dengan session variable)
 export async function PUT(request) {
-  try {
-    const data = await request.formData();
-    const id = data.get("id");
-    const file = data.get("file");
-    let gambar_url = data.get("gambar_url");
+  const auth = await getAuth(request);
+  if (!auth || auth.role !== 'superadmin') {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
-    // Proses file jika ada upload baru pada saat edit
-    if (file && typeof file !== "string") {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      const ext = path.extname(file.name);
-      const hash = crypto.randomBytes(16).toString("hex");
-      const filename = `${hash}${ext}`;
-      
-      const uploadDir = path.join(process.cwd(), "public", "uploads");
-      await mkdir(uploadDir, { recursive: true });
-      
-      const filePath = path.join(uploadDir, filename);
-      await writeFile(filePath, buffer);
-      gambar_url = `/uploads/${filename}`;
+  try {
+    const formData = await request.formData();
+    const id = formData.get("id");
+    const nama_barang = formData.get("nama_barang");
+    const kategori = formData.get("kategori");
+    const harga = formData.get("harga");
+    const stok_jumlah = formData.get("stok_jumlah");
+    const link_shopee = formData.get("link_shopee") || null;
+    let gambar_url = formData.get("gambar_url") || null;
+    const file = formData.get("file");
+
+    if (!id) {
+      return NextResponse.json({ error: "ID produk diperlukan" }, { status: 400 });
     }
 
-    const nama_barang = data.get("nama_barang");
-    const kategori = data.get("kategori");
-    const harga = data.get("harga");
-    const stok_jumlah = data.get("stok_jumlah");
-    const link_shopee = data.get("link_shopee");
+    // ✅ SET session variable untuk trigger UPDATE
+    await db.query("SET @current_user_id = ?", [auth.id]);
+
+    // Upload file baru jika ada
+    if (file && file.size > 0) {
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const fileName = `${Date.now()}-${file.name}`;
+      const uploadDir = path.join(process.cwd(), "public", "uploads");
+      
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
+      
+      fs.writeFileSync(path.join(uploadDir, fileName), buffer);
+      gambar_url = `/uploads/${fileName}`;
+    }
 
     await db.query(
       "UPDATE products SET nama_barang = ?, kategori = ?, harga = ?, stok_jumlah = ?, link_shopee = ?, gambar_url = ? WHERE id = ?",
-      [nama_barang, kategori, harga, stok_jumlah, link_shopee, gambar_url, id]
+      [nama_barang, kategori, harga, stok_jumlah || 0, link_shopee, gambar_url, id]
     );
 
     return NextResponse.json({ message: "Produk berhasil diperbarui" });
+
   } catch (error) {
-    console.error("[PRODUCTS_PUT]", error);
-    return NextResponse.json({ error: "Gagal memperbarui produk" }, { status: 500 });
+    console.error("[PRODUCTS_PUT_ERROR]", error);
+    return NextResponse.json({ error: "Gagal update produk" }, { status: 500 });
   }
 }
 
+// ✅ DELETE: Hapus produk (dengan session variable untuk trigger)
 export async function DELETE(request) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get("id");
+  const auth = await getAuth(request);
+  if (!auth || auth.role !== 'superadmin') {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get("id");
+
+  if (!id) {
+    return NextResponse.json({ error: "ID produk diperlukan" }, { status: 400 });
+  }
+
+  try {
+    // ✅ SET session variable untuk trigger DELETE
+    await db.query("SET @current_user_id = ?", [auth.id]);
+    
     await db.query("DELETE FROM products WHERE id = ?", [id]);
     return NextResponse.json({ message: "Produk berhasil dihapus" });
   } catch (error) {
-    console.error("[PRODUCTS_DELETE]", error);
+    console.error("[PRODUCTS_DELETE_ERROR]", error);
     return NextResponse.json({ error: "Gagal menghapus produk" }, { status: 500 });
   }
 }

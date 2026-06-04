@@ -1,0 +1,32 @@
+{
+  "name": "gerak-ncek",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.3",
+    "dom-to-image-more": "^3.7.2",
+    "html-to-image": "^1.11.13",
+    "html2canvas": "^1.4.1",
+    "html2pdf.js": "^0.14.0",
+    "jose": "^6.2.3",
+    "jspdf": "^4.2.1",
+    "mysql2": "^3.22.3",
+    "next": "^15.3.9",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "sweetalert2": "^11.26.24"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.6",
+    "tailwindcss": "^4"
+  }
+}

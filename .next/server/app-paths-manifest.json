@@ -1,10 +1,8 @@
 {
-  "/api/auth/me/route": "app/api/auth/me/route.js",
+  "/_not-found/page": "app/_not-found/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/api/servis/route": "app/api/servis/route.js",
-  "/login/page": "app/login/page.js",
-  "/stok/page": "app/stok/page.js",
-  "/page": "app/page.js",
-  "/admin/page": "app/admin/page.js",
-  "/admin/laporan/page": "app/admin/laporan/page.js"
+  "/api/auth/me/route": "app/api/auth/me/route.js",
+  "/admin/laporan/page": "app/admin/laporan/page.js",
+  "/admin/page": "app/admin/page.js"
 }

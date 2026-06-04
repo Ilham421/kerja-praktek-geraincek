@@ -6,7 +6,7 @@ import Swal from 'sweetalert2';
 export default function AdminDashboard() {
   const [services, setServices] = useState([]);
   const [products, setProducts] = useState([]);
-  const [mounted, setMounted] = useState(false);
+  const mountedRef = useRef(false);
   const [user, setUser] = useState(null);
   const [selectedPrint, setSelectedPrint] = useState(null);
   const [serviceSearch, setServiceSearch] = useState("");
@@ -55,12 +55,13 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
-    setMounted(true);
+    mountedRef.current = true;
     fetchData();
     // Get user role for RBAC
     fetch("/api/auth/me")
       .then(res => res.ok ? res.json() : null)
       .then(data => setUser(data));
+    return () => { mountedRef.current = false; };
   }, []);
 
   // Stats Calculation
@@ -402,7 +403,7 @@ export default function AdminDashboard() {
     setCurrentPage(1);
   }, [serviceSearch, itemsPerPage]);
 
-  if (!mounted) {
+  if (!mountedRef.current) {
     return <div className="min-h-screen bg-slate-50 p-8">Loading Dashboard...</div>;
   }
 

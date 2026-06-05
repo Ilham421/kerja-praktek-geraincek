@@ -1,10 +1,14 @@
 {
-  "/api/auth/me/route": "app/api/auth/me/route.js",
   "/api/servis/route": "app/api/servis/route.js",
+  "/api/auth/me/route": "app/api/auth/me/route.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/login/page": "app/login/page.js",
-  "/stok/page": "app/stok/page.js",
-  "/admin/log/page": "app/admin/log/page.js",
-  "/admin/page": "app/admin/page.js",
-  "/admin/laporan/page": "app/admin/laporan/page.js"
+  "/api/contacts/route": "app/api/contacts/route.js",
+  "/api/users/route": "app/api/users/route.js",
+  "/api/products/route": "app/api/products/route.js",
+  "/page": "app/page.js",
+  "/kontak/page": "app/kontak/page.js",
+  "/admin/laporan/page": "app/admin/laporan/page.js",
+  "/admin/contacts/page": "app/admin/contacts/page.js",
+  "/admin/users/page": "app/admin/users/page.js",
+  "/admin/page": "app/admin/page.js"
 }

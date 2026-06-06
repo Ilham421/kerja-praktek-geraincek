@@ -1,6 +1,9 @@
 {
-  "/kontak/page": "app/kontak/page.js",
+  "/api/auth/me/route": "app/api/auth/me/route.js",
+  "/api/contacts/route": "app/api/contacts/route.js",
   "/page": "app/page.js",
+  "/kontak/page": "app/kontak/page.js",
   "/admin/laporan/page": "app/admin/laporan/page.js",
-  "/admin/contacts/page": "app/admin/contacts/page.js"
+  "/admin/contacts/page": "app/admin/contacts/page.js",
+  "/admin/page": "app/admin/page.js"
 }

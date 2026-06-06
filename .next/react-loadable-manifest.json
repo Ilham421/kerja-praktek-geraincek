@@ -23,18 +23,6 @@
       "static/chunks/_app-pages-browser_node_modules_next_dist_client_dev_noop-turbopack-hmr_js.js"
     ]
   },
-  "app\\admin\\laporan\\page.jsx -> dom-to-image-more": {
-    "id": "app\\admin\\laporan\\page.jsx -> dom-to-image-more",
-    "files": [
-      "static/chunks/_app-pages-browser_node_modules_dom-to-image-more_dist_dom-to-image-more_min_js.js"
-    ]
-  },
-  "app\\admin\\laporan\\page.jsx -> jspdf": {
-    "id": "app\\admin\\laporan\\page.jsx -> jspdf",
-    "files": [
-      "static/chunks/_app-pages-browser_node_modules_jspdf_dist_jspdf_es_min_js.js"
-    ]
-  },
   "app\\admin\\page.jsx -> dom-to-image-more": {
     "id": "app\\admin\\page.jsx -> dom-to-image-more",
     "files": [

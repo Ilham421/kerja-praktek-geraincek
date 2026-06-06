@@ -4,32 +4,16 @@ import ContactLocation from "@/components/ContactLocation";
 import ContactForm from "@/components/ContactForm";
 
 const services = [
-  {
-    icon: "🔧",
-    title: "Service Handphone & Laptop",
-    description: "Perbaikan layar, baterai, speaker, konektor charger, dan masalah software/booting.",
-  },
-  {
-    icon: "📱",
-    title: "Penjualan Sparepart",
-    description: "LCD, baterai, casing, kaca anti gores, charger, dan aksesoris original/aftermarket.",
-  },
-  {
-    icon: "🛒",
-    title: "Jual Beli Unit",
-    description: "Beli dan jual handphone bekas/baru dalam berbagai kondisi dengan harga wajar.",
-  },
-  {
-    icon: "💬",
-    title: "Konsultasi Gratis",
-    description: "Informasi layanan, estimasi biaya, dan saran perawatan untuk pelanggan baru.",
-  },
+  { icon: "🔧", title: "Service Handphone & Laptop", description: "Perbaikan layar, baterai, speaker, konektor charger, dan masalah software/booting." },
+  { icon: "📱", title: "Penjualan Sparepart", description: "LCD, baterai, casing, kaca anti gores, charger, dan aksesoris original/aftermarket." },
+  { icon: "🛒", title: "Jual Beli Unit", description: "Beli dan jual handphone bekas/baru dalam berbagai kondisi dengan harga wajar." },
+  { icon: "💬", title: "Konsultasi Gratis", description: "Informasi layanan, estimasi biaya, dan saran perawatan untuk pelanggan baru." },
 ];
 
 export default function Home() {
   return (
     <>
-      {/* 2. Hero Section */}
+      {/* Hero Section */}
       <section className="mx-auto max-w-7xl px-6 py-24 lg:px-8">
         <div className="grid gap-12 md:grid-cols-2 md:items-center">
           <div className="space-y-8">
@@ -46,13 +30,13 @@ export default function Home() {
             </p>
             <div className="flex flex-col gap-4 sm:flex-row">
               <a
-                href="https://wa.me/628xxxxxxxxxx"
+                href="https://wa.me/6285710043275"
                 className="inline-flex items-center justify-center gap-2 rounded-lg bg-green-600 px-8 py-4 text-lg font-semibold text-white hover:bg-green-700 transition shadow-lg"
               >
                 💬 Konsultasi WhatsApp
               </a>
               <Link
-                href="/cek-status"
+                href="#status"
                 className="inline-flex items-center justify-center rounded-lg border-2 border-gray-300 px-8 py-4 text-lg font-semibold text-gray-900 hover:border-gray-400 hover:bg-gray-50 transition"
               >
                 Cek Status Servis
@@ -93,7 +77,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3. Services Section */}
+      {/* Services Section */}
       <section id="layanan" className="bg-gray-50 py-12 md:py-20">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mb-10 md:mb-16 space-y-4 text-center">
@@ -110,12 +94,12 @@ export default function Home() {
             ))}
           </div>
           <div className="mt-12 text-center">
-            <Link href="/layanan" className="text-blue-600 font-bold hover:underline">Lihat Detail Semua Layanan →</Link>
+            <Link href="/stok" className="text-blue-600 font-bold hover:underline">Lihat Produk & Sparepart →</Link>
           </div>
         </div>
       </section>
 
-      {/* 4. Trust/Keunggulan Section */}
+      {/* Trust Section */}
       <section className="py-20 bg-white">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
@@ -126,17 +110,17 @@ export default function Home() {
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-               {["Garansi Resmi", "Teknisi Bersertifikat", "Suku Cadang Original", "Tanpa Biaya Tersembunyi"].map((text) => (
-                 <div key={text} className="p-4 rounded-lg bg-blue-50 border border-blue-100 font-medium text-gray-800 flex items-center gap-2">
-                    <span className="text-blue-600 text-xl">★</span> {text}
-                 </div>
-               ))}
+              {["Garansi Resmi", "Teknisi Bersertifikat", "Suku Cadang Original", "Tanpa Biaya Tersembunyi"].map((text) => (
+                <div key={text} className="p-4 rounded-lg bg-blue-50 border border-blue-100 font-medium text-gray-800 flex items-center gap-2">
+                  <span className="text-blue-600 text-xl">★</span> {text}
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* 5. Service Tracker Section */}
+      {/* Service Tracker */}
       <section id="status" className="bg-gradient-to-br from-blue-50 to-white py-20">
         <div className="mx-auto max-w-7xl px-6 lg:px-8 text-center">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">Pantau Status Servis</h2>
@@ -145,7 +129,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 6. Contact & Location Section */}
+      {/* Contact & Location */}
       <section id="kontak" className="py-20 bg-white">
         <ContactLocation />
         <div className="mt-20 max-w-2xl mx-auto px-6">

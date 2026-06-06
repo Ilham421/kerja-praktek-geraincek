@@ -19,8 +19,8 @@ export default function ContactLocation() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900">Telepon</h3>
-                  <p className="text-gray-600">08xx-xxxx-xxxx</p>
-                  <a href="tel:08xxxxxxxxxx" className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                  <p className="text-gray-600">+62 857-1004-3275</p>
+                  <a href="tel:+6285710043275" className="text-sm text-blue-600 hover:text-blue-700 font-medium">
                     Hubungi Sekarang →
                   </a>
                 </div>
@@ -34,7 +34,7 @@ export default function ContactLocation() {
                   <h3 className="font-semibold text-gray-900">WhatsApp</h3>
                   <p className="text-gray-600">Chat & Tanya Langsung</p>
                   <a
-                    href="https://wa.me/628xxxxxxxxxx"
+                    href="https://wa.me/6285710043275"
                     className="text-sm text-green-600 hover:text-green-700 font-medium"
                   >
                     Buka WhatsApp →
@@ -61,9 +61,14 @@ export default function ContactLocation() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900">Lokasi</h3>
-                  <p className="text-gray-600">Jl. Utama No. XX, Rumah Usaha</p>
+                  <p className="text-gray-600">
+                    Perum Mustika Tigaraksa Blok C.30 No.31<br />
+                    Ds. Pasir Nangka, Kec. Tigaraksa<br />
+                    Kab. Tangerang – Banten 15720
+                  </p>
                   <a
-                    href="https://maps.google.com"
+                    href="https://maps.app.goo.gl/PmbCrkYapda7gFqp8"
+                    target="_blank"
                     className="text-sm text-red-600 hover:text-red-700 font-medium"
                   >
                     Lihat di Maps →
@@ -73,20 +78,26 @@ export default function ContactLocation() {
             </div>
           </div>
 
-          {/* Map Placeholder */}
+          {/* Map */}
           <div className="rounded-2xl overflow-hidden shadow-lg">
-            <div className="aspect-square bg-gray-200 flex items-center justify-center">
-              <div className="text-center">
-                <span className="text-5xl mb-4 inline-block">📍</span>
-                <h3 className="font-semibold text-gray-900 mb-2">Gerai Ncek</h3>
-                <p className="text-gray-600 text-sm mb-4">Google Maps Integration</p>
-                <a
-                  href="https://maps.google.com"
-                  className="inline-flex rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
-                >
-                  Buka Lokasi
-                </a>
-              </div>
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3965.5!2d106.5!3d-6.3!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwMTgnMDAuMCJTIDEwNsKwMzAnMDAuMCJF!5e0!3m2!1sid!2sid!4v1234567890"
+              width="100%"
+              height="400"
+              style={{ border: 0 }}
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="w-full h-full min-h-[400px]"
+            ></iframe>
+            <div className="p-4 bg-white text-center">
+              <a
+                href="https://maps.app.goo.gl/PmbCrkYapda7gFqp8"
+                target="_blank"
+                className="inline-flex rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition"
+              >
+                📍 Buka di Google Maps
+              </a>
             </div>
           </div>
         </div>

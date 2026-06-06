@@ -71,7 +71,7 @@ export default function ContactForm() {
               value={form.phone}
               onChange={handleChange}
               className="mt-2 w-full rounded-lg border-2 border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-200"
-              placeholder="081385085695"
+              placeholder="0813xxxxx"
             />
           </label>
         </div>
@@ -85,7 +85,7 @@ export default function ContactForm() {
             value={form.email}
             onChange={handleChange}
             className="mt-2 w-full rounded-lg border-2 border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-200"
-            placeholder="email@domain.com"
+            placeholder="email@gmail.com"
           />
         </label>
 

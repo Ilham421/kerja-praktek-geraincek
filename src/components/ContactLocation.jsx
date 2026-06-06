@@ -62,12 +62,14 @@ export default function ContactLocation() {
                 <div>
                   <h3 className="font-semibold text-gray-900">Lokasi</h3>
                   <p className="text-gray-600">
-                    Perum Mustika Tigaraksa Blok C.30 No.31<br />
-                    Ds. Pasir Nangka, Kec. Tigaraksa<br />
-                    Kab. Tangerang – Banten 15720
+                    Perum Mustika Tigaraksa<br />
+                    Jl. Mustika Gg. Durian 4 No.31 Blok C.30<br />
+                    RT.07/RW.07, Pasir Nangka<br />
+                    Kec. Tigaraksa, Kab. Tangerang<br />
+                    Banten 15720
                   </p>
                   <a
-                    href="https://maps.app.goo.gl/PmbCrkYapda7gFqp8"
+                    href="https://maps.app.goo.gl/eA5yXKZ6zV25FdQc8?g_st=aw"
                     target="_blank"
                     className="text-sm text-red-600 hover:text-red-700 font-medium"
                   >
@@ -80,24 +82,19 @@ export default function ContactLocation() {
 
           {/* Map */}
           <div className="rounded-2xl overflow-hidden shadow-lg">
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3965.5!2d106.5!3d-6.3!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwMTgnMDAuMCJTIDEwNsKwMzAnMDAuMCJF!5e0!3m2!1sid!2sid!4v1234567890"
-              width="100%"
-              height="400"
-              style={{ border: 0 }}
-              allowFullScreen=""
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              className="w-full h-full min-h-[400px]"
-            ></iframe>
-            <div className="p-4 bg-white text-center">
-              <a
-                href="https://maps.app.goo.gl/PmbCrkYapda7gFqp8"
-                target="_blank"
-                className="inline-flex rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition"
-              >
-                📍 Buka di Google Maps
-              </a>
+            <div className="bg-gray-200 h-[400px] flex items-center justify-center">
+              <div className="text-center p-8">
+                <span className="text-5xl mb-4 inline-block">📍</span>
+                <h3 className="font-semibold text-gray-900 mb-2 text-lg">Gerai Ncek</h3>
+                <p className="text-gray-600 text-sm mb-4">Perum Mustika Tigaraksa, Blok C.30 No.31</p>
+                <a
+                  href="https://maps.app.goo.gl/eA5yXKZ6zV25FdQc8?g_st=aw"
+                  target="_blank"
+                  className="inline-flex rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition"
+                >
+                  📍 Buka di Google Maps
+                </a>
+              </div>
             </div>
           </div>
         </div>

@@ -21,7 +21,6 @@ export default function NavigationWrapper({ children }) {
               Gerai Ncek
             </Link>
 
-            {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               suppressHydrationWarning
@@ -37,7 +36,6 @@ export default function NavigationWrapper({ children }) {
               </svg>
             </button>
 
-            {/* Desktop Menu */}
             <div className="hidden gap-8 md:flex">
               <Link href="/" className={`text-sm font-medium transition ${pathname === "/" ? "text-blue-600" : "text-gray-600 hover:text-blue-600"}`}>Beranda</Link>
               <Link href="/#layanan" className={`text-sm font-medium transition ${pathname === "/#layanan" ? "text-blue-600" : "text-gray-600 hover:text-blue-600"}`}>Layanan</Link>
@@ -57,7 +55,6 @@ export default function NavigationWrapper({ children }) {
             </div>
           </div>
 
-          {/* Mobile Menu Content */}
           {isMenuOpen && (
             <div className="md:hidden mt-4 pt-4 border-t border-gray-100 space-y-4">
               <Link href="/" onClick={() => setIsMenuOpen(false)} className="block text-base font-medium text-gray-600">Beranda</Link>
@@ -121,11 +118,11 @@ export default function NavigationWrapper({ children }) {
                 </li>
                 <li className="flex gap-2">
                   <span>📍</span>
-                  <span>Perum. Mustika Tigaraksa Blok C.30 No.31, Tigaraksa</span>
+                  <span>Perum Mustika Tigaraksa, Blok C.30 No.31</span>
                 </li>
                 <li className="flex gap-2">
                   <span>🗺️</span>
-                  <a href="https://maps.app.goo.gl/PmbCrkYapda7gFqp8" target="_blank" className="hover:text-white transition">Google Maps</a>
+                  <a href="https://maps.app.goo.gl/eA5yXKZ6zV25FdQc8?g_st=aw" target="_blank" className="hover:text-white transition">Google Maps</a>
                 </li>
               </ul>
             </div>
@@ -133,7 +130,7 @@ export default function NavigationWrapper({ children }) {
           <div className="border-t border-gray-700 pt-8 flex flex-col md:flex-row md:items-center md:justify-between text-sm text-gray-400">
             <p>&copy; {new Date().getFullYear()} Gerai Ncek. Semua hak dilindungi.</p>
             <div className="flex gap-6 mt-4 md:mt-0">
-              <span>Perum Mustika Tigaraksa, Kab. Tangerang – Banten 15720</span>
+              <span>Jl. Mustika Gg. Durian 4 No.31, RT.07/RW.07, Tigaraksa – Banten 15720</span>
             </div>
           </div>
         </div>

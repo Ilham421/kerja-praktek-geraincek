@@ -24,9 +24,6 @@ export default function AdminDashboard() {
     nama_barang: "", kategori: "Handphone", harga: "", stok_jumlah: "", link_shopee: "", gambar_url: ""
   });
 
-  // ============================================
-  // HELPER: HITUNG SELISIH HARI
-  // ============================================
   const hitungHari = (dateString) => {
     if (!dateString) return "?";
     const mulai = new Date(dateString);
@@ -34,9 +31,6 @@ export default function AdminDashboard() {
     return Math.floor((sekarang - mulai) / (1000 * 60 * 60 * 24));
   };
 
-  // ============================================
-  // HELPER: GET STATUS INFO
-  // ============================================
   const getStatusInfo = (s) => {
     switch (s.status) {
       case "Antri": return `🚶 ${hitungHari(s.created_at)} hari menunggu`;
@@ -47,9 +41,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // ============================================
-  // HELPER: GET STATUS COLOR
-  // ============================================
   const getStatusColor = (status) => {
     switch (status) {
       case "Selesai": return "bg-emerald-100 text-emerald-700";
@@ -59,7 +50,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // Fetch Data
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -168,13 +158,9 @@ export default function AdminDashboard() {
     if (formValues) {
       try {
         const fd = new FormData();
-        fd.append("id", formValues.id);
-        fd.append("nama_barang", formValues.nama_barang);
-        fd.append("kategori", formValues.kategori);
-        fd.append("harga", formValues.harga);
-        fd.append("stok_jumlah", formValues.stok_jumlah);
-        fd.append("link_shopee", formValues.link_shopee);
-        fd.append("gambar_url", formValues.gambar_url);
+        fd.append("id", formValues.id); fd.append("nama_barang", formValues.nama_barang); fd.append("kategori", formValues.kategori);
+        fd.append("harga", formValues.harga); fd.append("stok_jumlah", formValues.stok_jumlah);
+        fd.append("link_shopee", formValues.link_shopee); fd.append("gambar_url", formValues.gambar_url);
         if (formValues.file) fd.append("file", formValues.file);
         const res = await fetch("/api/products", { method: "PUT", body: fd });
         if (!res.ok) { const err = await res.json(); throw new Error(err.error || "Gagal"); }
@@ -221,7 +207,7 @@ export default function AdminDashboard() {
   };
 
   const handlePrint = async (service) => {
-    setSelectedPrint({ ...service, tokoAlamat: "Perum Mustika Tigaraksa, Blok C 30 No. 31 RT RW 007, Kecamatan Tigaraksa", tokoPemilik: "Syandhika Aerio Gautama", tanggal: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) });
+    setSelectedPrint({ ...service, tokoAlamat: "Perum Mustika Tigaraksa, Jl. Mustika Gg. Durian 4 No.31 Blok C.30, RT.07/RW.07, Pasir Nangka, Kec. Tigaraksa, Kab. Tangerang, Banten 15720", tokoPemilik: "Syandhika Aerio Gautama", tanggal: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) });
     try {
       const domtoimage = (await import('dom-to-image-more')).default;
       const { jsPDF } = await import('jspdf');
@@ -252,30 +238,28 @@ export default function AdminDashboard() {
     <div className="space-y-8">
       <style jsx global>{`@media print{@page{size:A5 portrait;margin:10mm}body *{visibility:hidden}#print-area,#print-area *{visibility:visible}#print-area{position:absolute;left:0;top:0;width:100%;background:white!important}.no-print{display:none!important}}`}</style>
       <div id="print-area" className="hidden print:block p-8 text-slate-900 font-sans bg-white">
-        <div className="flex justify-between items-start border-b-4 border-slate-900 pb-4 mb-6"><div><h1 className="text-3xl font-black">GERAI NCEK</h1><p className="text-sm">Perum Mustika Tigaraksa, Blok C 30 No. 31</p><p className="text-sm">WhatsApp: 0812-3456-7890</p></div><div><h2 className="text-2xl font-bold uppercase">Nota Servis</h2></div></div>
+        <div className="flex justify-between items-start border-b-4 border-slate-900 pb-4 mb-6">
+          <div><h1 className="text-3xl font-black">GERAI NCEK</h1><p className="text-sm">Perum Mustika Tigaraksa, Jl. Mustika Gg. Durian 4 No.31 Blok C.30</p><p className="text-sm">RT.07/RW.07, Pasir Nangka, Kec. Tigaraksa, Kab. Tangerang, Banten 15720</p><p className="text-sm">WhatsApp: +62 857-1004-3275</p></div>
+          <div><h2 className="text-2xl font-bold uppercase">Nota Servis</h2></div>
+        </div>
         {selectedPrint && (<><div className="flex justify-between text-sm mb-8"><div><p><span className="font-bold">Pelanggan</span>: {selectedPrint.nama_pelanggan}</p><p><span className="font-bold">WhatsApp</span>: {selectedPrint.no_whatsapp}</p></div><div className="text-right"><p><span className="font-bold">No. Nota</span>: {selectedPrint.kode_nota}</p><p><span className="font-bold">Tanggal</span>: {selectedPrint.tanggal}</p></div></div><table className="w-full border border-slate-400 text-sm mb-10"><thead className="bg-slate-100"><tr><th className="border p-3 text-left">Perangkat</th><th className="border p-3 text-left">Kendala</th><th className="border p-3 text-right">Biaya</th></tr></thead><tbody><tr><td className="border p-4 font-semibold">{selectedPrint.tipe_perangkat}</td><td className="border p-4 italic">{selectedPrint.kendala}</td><td className="border p-4 text-right font-bold">{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(selectedPrint.estimasi_biaya)}</td></tr></tbody></table><div className="flex justify-between"><div className="text-[10px] italic"><p className="font-bold">Syarat & Ketentuan:</p><p>1. Barang tidak diambil 3 bulan di luar tanggung jawab.</p><p>2. Garansi hanya komponen yang diganti.</p><p>3. Nota wajib dibawa saat pengambilan.</p></div><div className="text-center"><p className="text-sm mb-16 italic">Hormat Kami,</p><div className="border-b border-slate-400 mb-1"></div><p className="text-xs uppercase font-bold">Syandhika Aerio Gautama</p></div></div><div className="mt-12 text-center border-t pt-4"><p className="text-sm italic">"Terima kasih telah mempercayakan servis Anda kepada kami"</p></div></>)}
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">{stats.map(stat => (<div key={stat.label} className="bg-white p-6 rounded-2xl shadow-sm border"><div className="flex items-center justify-between mb-2"><span className="text-sm font-bold text-slate-400 uppercase">{stat.label}</span><div className={`${stat.color} w-10 h-10 rounded-lg flex items-center justify-center text-white`}>{stat.icon}</div></div><h3 className="text-3xl font-bold">{stat.value}</h3></div>))}</div>
 
-      {/* Forms */}
       <div className={`grid gap-8 ${user?.role === 'superadmin' ? 'lg:grid-cols-2' : 'max-w-2xl'}`}>
         <div className="bg-white p-6 rounded-2xl shadow-sm border"><h3 className="font-bold text-lg mb-4">Input Servis Baru</h3><form onSubmit={handleAddService} className="grid grid-cols-1 gap-4"><input type="text" placeholder="Nama Pelanggan" required value={formData.nama_pelanggan} onChange={e => setFormData({ ...formData, nama_pelanggan: e.target.value })} className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500" /><input type="text" placeholder="WhatsApp" required value={formData.no_whatsapp} onChange={e => setFormData({ ...formData, no_whatsapp: e.target.value })} className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500" /><input type="text" placeholder="Tipe Perangkat" required value={formData.tipe_perangkat} onChange={e => setFormData({ ...formData, tipe_perangkat: e.target.value })} className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500" /><textarea placeholder="Kendala" required value={formData.issue} onChange={e => setFormData({ ...formData, issue: e.target.value })} className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500" /><input type="number" placeholder="Estimasi Biaya" required value={formData.estimasi_biaya} onChange={e => setFormData({ ...formData, estimasi_biaya: e.target.value })} className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500" /><button type="submit" className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition">Simpan Nota Servis</button></form></div>
         {user?.role === 'superadmin' && (<div className="bg-white p-6 rounded-2xl shadow-sm border"><h3 className="font-bold text-lg mb-4">📦 Tambah Produk Stok</h3><form onSubmit={handleAddProduct} className="grid grid-cols-1 gap-4"><input type="text" placeholder="Nama Barang" required value={productForm.nama_barang} onChange={e => setProductForm({ ...productForm, nama_barang: e.target.value })} className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500" /><select value={productForm.kategori} onChange={e => setProductForm({ ...productForm, kategori: e.target.value })} className="w-full px-4 py-2 border rounded-lg outline-none bg-white"><option>Handphone</option><option>Laptop</option><option>Sparepart</option><option>Aksesoris</option></select><div className="grid grid-cols-2 gap-4"><input type="number" placeholder="Harga" required value={productForm.harga} onChange={e => setProductForm({ ...productForm, harga: e.target.value })} className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500" /><input type="number" placeholder="Stok" required value={productForm.stok_jumlah} onChange={e => setProductForm({ ...productForm, stok_jumlah: e.target.value })} className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500" /></div><input type="text" placeholder="Link Shopee" value={productForm.link_shopee} onChange={e => setProductForm({ ...productForm, link_shopee: e.target.value })} className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500" /><div className="space-y-2"><input type="text" placeholder="URL Gambar" value={productForm.gambar_url} onChange={e => setProductForm({ ...productForm, gambar_url: e.target.value })} className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500" /><p className="text-xs text-slate-400">Upload file lokal (Maks 800KB):</p><input type="file" ref={fileInputRef} accept="image/*" onChange={handleFileValidation} className="text-xs" /></div><button type="submit" className="w-full bg-slate-900 text-white font-bold py-3 rounded-xl hover:bg-slate-800 transition">Simpan Produk</button></form></div>)}
       </div>
 
-      {/* Tabel Servis */}
       <div className="bg-white rounded-2xl shadow-sm border overflow-hidden">
         <div className="p-6 border-b flex flex-col md:flex-row md:items-center justify-between gap-4"><h3 className="font-bold text-lg">Daftar Servis Terbaru</h3><div className="relative"><input type="text" placeholder="Cari..." className="pl-10 pr-4 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500 w-full md:w-64" value={serviceSearch} onChange={e => setServiceSearch(e.target.value)} /><span className="absolute left-3 top-2.5 text-slate-400">🔍</span></div></div>
         <div className="overflow-x-auto"><table className="w-full text-left"><thead className="bg-slate-50 text-slate-500 text-xs font-bold uppercase"><tr><th className="px-6 py-4">Nota</th><th className="px-6 py-4">Pelanggan</th><th className="px-6 py-4">Perangkat</th><th className="px-6 py-4">Biaya</th><th className="px-6 py-4">Status</th><th className="px-6 py-4">Aksi</th></tr></thead><tbody className="divide-y divide-slate-100">{!loading && paginatedServices.map(s => (<tr key={s.id} className="hover:bg-slate-50"><td className="px-6 py-4 font-mono text-xs text-indigo-600 font-bold">{s.kode_nota}</td><td className="px-6 py-4"><p className="font-bold text-sm">{s.nama_pelanggan}</p><p className="text-xs text-slate-500">{s.no_whatsapp}</p></td><td className="px-6 py-4"><p className="text-sm font-medium">{s.tipe_perangkat}</p><p className="text-xs text-slate-500 italic line-clamp-1">"{s.kendala}"</p></td><td className="px-6 py-4 text-sm font-semibold">{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(s.estimasi_biaya)}</td><td className="px-6 py-4"><select value={s.status} onChange={e => handleStatusChange(s.id, e.target.value)} className={`text-[10px] font-bold uppercase rounded-full px-2 py-1 outline-none cursor-pointer ${getStatusColor(s.status)}`}><option value="Antri">ANTRI</option><option value="Proses">PROSES</option><option value="Selesai">SELESAI</option><option value="Diambil">DIAMBIL</option></select><p className="text-[9px] text-slate-400 italic mt-1 text-center">{getStatusInfo(s)}</p></td><td className="px-6 py-4 flex items-center gap-1.5"><button onClick={() => sendWhatsApp(s)} className="p-2 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100" title="WA">💬</button><button onClick={() => handlePrint(s)} className="p-2 bg-slate-50 text-slate-600 rounded-lg hover:bg-slate-100" title="Cetak">🖨️</button><button onClick={() => handleEditService(s)} className="p-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100" title="Edit">✏️</button><button onClick={() => handleDelete(s.id)} className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100" title="Hapus">🗑️</button></td></tr>))}</tbody></table></div>
-        {/* Mobile Card View */}
         <div className="lg:hidden divide-y divide-slate-100">{!loading && paginatedServices.map(s => (<div key={s.id} className="p-4 space-y-3"><div className="flex justify-between items-start"><div><p className="font-mono text-xs text-indigo-600 font-bold">{s.kode_nota}</p><p className="font-bold">{s.nama_pelanggan}</p></div><select value={s.status} onChange={e => handleStatusChange(s.id, e.target.value)} className={`text-[10px] font-bold uppercase rounded-full px-2 py-1 outline-none ${getStatusColor(s.status)}`}><option value="Antri">ANTRI</option><option value="Proses">PROSES</option><option value="Selesai">SELESAI</option><option value="Diambil">DIAMBIL</option></select></div><p className="text-[9px] text-slate-400 italic">{getStatusInfo(s)}</p><div className="bg-slate-50 p-3 rounded-lg text-sm"><p className="font-medium">{s.tipe_perangkat}</p><p className="text-slate-500 italic text-xs">"{s.kendala}"</p><p className="mt-2 font-bold text-indigo-600">{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(s.estimasi_biaya)}</p></div><div className="grid grid-cols-2 gap-2"><button onClick={() => sendWhatsApp(s)} className="py-2 bg-emerald-50 text-emerald-600 rounded-lg text-xs font-bold">💬 WA</button><button onClick={() => handlePrint(s)} className="py-2 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold">🖨️ Cetak</button><button onClick={() => handleEditService(s)} className="py-2 bg-indigo-50 text-indigo-600 rounded-lg text-xs font-bold">✏️ Edit</button><button onClick={() => handleDelete(s.id)} className="py-2 bg-red-50 text-red-600 rounded-lg text-xs font-bold">🗑️ Hapus</button></div></div>))}</div>
         {paginatedServices.length === 0 && !loading && <div className="p-10 text-center text-slate-400">Data servis tidak ditemukan.</div>}
         <div className="p-4 border-t flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/50"><div className="flex items-center gap-2 text-sm"><span>Tampilkan</span><select value={itemsPerPage} onChange={e => setItemsPerPage(Number(e.target.value))} className="border rounded px-2 py-1"><option value={5}>5</option><option value={10}>10</option><option value={20}>20</option></select><span>data</span></div><div className="flex items-center gap-4"><button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="px-4 py-2 border rounded-lg text-sm disabled:opacity-50">Sebelumnya</button><span className="text-sm font-bold">Hal {currentPage} dari {totalPages || 1}</span><button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages || totalPages === 0} className="px-4 py-2 border rounded-lg text-sm disabled:opacity-50">Selanjutnya</button></div></div>
       </div>
 
-      {/* Tabel Produk */}
       {user?.role === 'superadmin' && (<div className="bg-white rounded-2xl shadow-sm border overflow-hidden"><div className="p-4 md:p-6 border-b flex flex-col md:flex-row md:items-center justify-between gap-4"><h3 className="font-bold text-lg">Daftar Produk & Stok</h3><div className="relative"><input type="text" placeholder="Cari..." className="pl-10 pr-4 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500 w-full lg:w-64" value={productSearch} onChange={e => setProductSearch(e.target.value)} /><span className="absolute left-3 top-2.5 text-slate-400">🔍</span></div></div><div className="hidden lg:block overflow-x-auto"><table className="w-full text-left min-w-[800px]"><thead className="bg-slate-50 text-slate-500 text-xs font-bold uppercase"><tr><th className="px-6 py-4">Barang</th><th className="px-6 py-4">Kategori</th><th className="px-6 py-4">Harga</th><th className="px-6 py-4">Stok</th><th className="px-6 py-4">Aksi</th></tr></thead><tbody className="divide-y divide-slate-100">{!loading && filteredProducts.map(p => (<tr key={p.id} className="hover:bg-slate-50"><td className="px-6 py-4 font-bold text-sm">{p.nama_barang}</td><td className="px-6 py-4"><span className="text-xs bg-slate-100 px-2 py-1 rounded">{p.kategori}</span></td><td className="px-6 py-4 text-sm font-bold text-indigo-600">Rp {parseInt(p.harga).toLocaleString('id-ID')}</td><td className="px-6 py-4 text-sm">{p.stok_jumlah} <span className="text-xs text-slate-400">Unit</span></td><td className="px-6 py-4 flex gap-3"><button onClick={() => handleEditProduct(p)} className="text-blue-600 hover:text-blue-800">✏️ Edit</button><button onClick={() => handleDeleteProduct(p.id)} className="text-red-600 hover:text-red-800">🗑️ Hapus</button></td></tr>))}</tbody></table></div><div className="lg:hidden divide-y">{!loading && filteredProducts.map(p => (<div key={p.id} className="p-4 flex items-center justify-between"><div><p className="font-bold truncate">{p.nama_barang}</p><p className="text-xs text-indigo-600 font-bold">Rp {parseInt(p.harga).toLocaleString('id-ID')}</p><p className="text-[10px] text-slate-400">Stok: {p.stok_jumlah}</p></div><div className="flex gap-2"><button onClick={() => handleEditProduct(p)} className="p-2 text-blue-600 bg-blue-50 rounded-lg">✏️</button><button onClick={() => handleDeleteProduct(p.id)} className="p-2 text-red-600 bg-red-50 rounded-lg">🗑️</button></div></div>))}</div>{filteredProducts.length === 0 && !loading && <div className="p-10 text-center text-slate-400">Produk tidak ditemukan.</div>}</div>)}
     </div>
   );

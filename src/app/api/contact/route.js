@@ -8,14 +8,14 @@ export async function POST(request) {
     if (!name || !phone || !message) {
       return NextResponse.json(
         { message: "Nama, telepon, dan pesan wajib diisi." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Simpan ke database local
     await db.query(
       "INSERT INTO contacts (name, phone, email, message) VALUES (?, ?, ?, ?)",
-      [name, phone, email || null, message]
+      [name, phone, email || null, message],
     );
 
     console.log("📩 Pesan kontak baru:", { name, phone });
@@ -27,7 +27,7 @@ export async function POST(request) {
     console.error("[CONTACT_ERROR]", error);
     return NextResponse.json(
       { message: "Terjadi kesalahan saat mengirim pesan." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

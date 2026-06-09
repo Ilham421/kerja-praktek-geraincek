@@ -7,7 +7,9 @@ async function getAuth(request) {
   const token = request.cookies.get("admin_token")?.value;
   if (!token) return null;
   try {
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET || "rahasia-ncek-123");
+    const secret = new TextEncoder().encode(
+      process.env.JWT_SECRET || "rahasia-ncek-123",
+    );
     const { payload } = await jwtVerify(token, secret);
     return payload;
   } catch (err) {
@@ -19,12 +21,15 @@ async function getAuth(request) {
 export async function GET() {
   try {
     const [rows] = await db.query(
-      "SELECT s.*, u.username as created_by_name FROM service_tickets s LEFT JOIN users u ON s.created_by = u.id ORDER BY s.id DESC"
+      "SELECT s.*, u.username as created_by_name FROM service_tickets s LEFT JOIN users u ON s.created_by = u.id ORDER BY s.id DESC",
     );
     return NextResponse.json(rows || []);
   } catch (error) {
     console.error("[SERVIS_GET]", error);
-    return NextResponse.json({ error: "Gagal mengambil data servis" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Gagal mengambil data servis" },
+      { status: 500 },
+    );
   }
 }
 
@@ -37,13 +42,22 @@ export async function POST(request) {
 
   try {
     const body = await request.json();
-    const { nama_pelanggan, no_whatsapp, tipe_perangkat, issue, estimasi_biaya } = body;
+    const {
+      nama_pelanggan,
+      no_whatsapp,
+      tipe_perangkat,
+      issue,
+      estimasi_biaya,
+    } = body;
 
     // Validasi
     if (!nama_pelanggan || !no_whatsapp || !issue) {
-      return NextResponse.json({ error: "Data pelanggan, WhatsApp, dan kendala wajib diisi" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Data pelanggan, WhatsApp, dan kendala wajib diisi" },
+        { status: 400 },
+      );
     }
-    
+
     // Generate kode nota
     const kode_nota = "NC-" + Date.now().toString().slice(-6);
 
@@ -54,18 +68,32 @@ export async function POST(request) {
     // ✅ Insert dengan created_by (trigger akan auto-log)
     const [result] = await db.query(
       "INSERT INTO service_tickets (kode_nota, nama_pelanggan, no_whatsapp, tipe_perangkat, kendala, estimasi_biaya, status, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-      [kode_nota, nama_pelanggan, no_whatsapp, tipe_perangkat, issue, biaya, statusDefault, auth.id]
+      [
+        kode_nota,
+        nama_pelanggan,
+        no_whatsapp,
+        tipe_perangkat,
+        issue,
+        biaya,
+        statusDefault,
+        auth.id,
+      ],
     );
 
-    return NextResponse.json({ 
-      id: result.insertId, 
-      kode_nota,
-      message: "Servis berhasil ditambahkan" 
-    }, { status: 201 });
-    
+    return NextResponse.json(
+      {
+        id: result.insertId,
+        kode_nota,
+        message: "Servis berhasil ditambahkan",
+      },
+      { status: 201 },
+    );
   } catch (error) {
     console.error("[SERVIS_POST_ERROR]:", error.message);
-    return NextResponse.json({ error: "Gagal ke database: " + error.message }, { status: 500 });
+    return NextResponse.json(
+      { error: "Gagal ke database: " + error.message },
+      { status: 500 },
+    );
   }
 }
 
@@ -81,10 +109,10 @@ export async function PATCH(request) {
 
     // ✅ Update dengan updated_by (trigger akan auto-log)
     await db.query(
-      "UPDATE service_tickets SET status = ?, updated_by = ? WHERE id = ?", 
-      [status, auth.id, id]
+      "UPDATE service_tickets SET status = ?, updated_by = ? WHERE id = ?",
+      [status, auth.id, id],
     );
-    
+
     return NextResponse.json({ message: "Status diperbarui" });
   } catch (error) {
     console.error("[SERVIS_PATCH_ERROR]:", error.message);
@@ -105,11 +133,14 @@ export async function DELETE(request) {
 
     // ✅ SET session variable untuk trigger DELETE
     await db.query("SET @current_user_id = ?", [auth.id]);
-    
+
     await db.query("DELETE FROM service_tickets WHERE id = ?", [id]);
     return NextResponse.json({ message: "Data servis dihapus" });
   } catch (error) {
     console.error("[SERVIS_DELETE_ERROR]:", error.message);
-    return NextResponse.json({ error: "Gagal menghapus data" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Gagal menghapus data" },
+      { status: 500 },
+    );
   }
 }

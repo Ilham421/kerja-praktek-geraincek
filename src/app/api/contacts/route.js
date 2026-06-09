@@ -6,7 +6,9 @@ async function getAuth(request) {
   const token = request.cookies.get("admin_token")?.value;
   if (!token) return null;
   try {
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET || "rahasia-ncek-123");
+    const secret = new TextEncoder().encode(
+      process.env.JWT_SECRET || "rahasia-ncek-123",
+    );
     const { payload } = await jwtVerify(token, secret);
     return payload;
   } catch {
@@ -17,25 +19,29 @@ async function getAuth(request) {
 // GET: Ambil semua pesan
 export async function GET(request) {
   const auth = await getAuth(request);
-  if (!auth || auth.role !== 'superadmin') {
+  if (!auth || auth.role !== "superadmin") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   try {
     const [rows] = await db.query(
-      "SELECT * FROM contacts ORDER BY created_at DESC"
+      "SELECT * FROM contacts ORDER BY created_at DESC",
     );
     return NextResponse.json(rows);
   } catch (error) {
     console.error("[CONTACTS_GET_ERROR]", error);
-    return NextResponse.json({ error: "Gagal mengambil data" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Gagal mengambil data" },
+      { status: 500 },
+    );
   }
 }
 
 // PATCH: Tandai sudah dibaca
 export async function PATCH(request) {
   const auth = await getAuth(request);
-  if (!auth) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!auth)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
     const { id } = await request.json();
@@ -49,7 +55,7 @@ export async function PATCH(request) {
 // DELETE: Hapus pesan
 export async function DELETE(request) {
   const auth = await getAuth(request);
-  if (!auth || auth.role !== 'superadmin') {
+  if (!auth || auth.role !== "superadmin") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

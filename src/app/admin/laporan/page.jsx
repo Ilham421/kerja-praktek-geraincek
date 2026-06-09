@@ -21,8 +21,21 @@ function LaporanContent() {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const startDate = searchParams.get("start") || "2026-05-01";
-  const endDate = searchParams.get("end") || "2026-05-31";
+  // Helper: format tanggal ke YYYY-MM-DD
+  const formatDate = (date) => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  };
+
+  // Auto: hari ini → 30 hari ke depan
+  const today = new Date();
+  const nextMonth = new Date(today);
+  nextMonth.setDate(today.getDate() + 30);
+
+  const startDate = searchParams.get("start") || formatDate(today);
+  const endDate = searchParams.get("end") || formatDate(nextMonth);
 
   useEffect(() => {
     fetch("/api/servis")

@@ -21,25 +21,20 @@
       "static/chunks/main-app.js",
       "static/chunks/app/api/auth/me/route.js"
     ],
-    "/api/servis/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/servis/route.js"
-    ],
     "/api/products/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/api/products/route.js"
     ],
-    "/admin/contacts/page": [
+    "/api/servis/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/admin/contacts/page.js"
+      "static/chunks/app/api/servis/route.js"
     ],
-    "/api/contacts/route": [
+    "/admin/laporan/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/api/contacts/route.js"
+      "static/chunks/app/admin/laporan/page.js"
     ],
     "/admin/users/page": [
       "static/chunks/webpack.js",
@@ -51,11 +46,6 @@
       "static/chunks/main-app.js",
       "static/chunks/app/api/users/route.js"
     ],
-    "/admin/laporan/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/admin/laporan/page.js"
-    ],
     "/admin/log/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -65,21 +55,6 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/api/log/route.js"
-    ],
-    "/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/page.js"
-    ],
-    "/stok/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/stok/page.js"
-    ],
-    "/api/servis/[nota]/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/servis/[nota]/route.js"
     ]
   }
 }

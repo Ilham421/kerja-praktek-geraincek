@@ -641,7 +641,7 @@ export default function AdminDashboard() {
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="bg-white p-6 rounded-2xl shadow-sm border"
+            className="bg-white p-6 rounded-2xl shadow-sm"
           >
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-bold text-slate-400 uppercase">
@@ -662,7 +662,7 @@ export default function AdminDashboard() {
       <div
         className={`grid gap-8 ${user?.role === "superadmin" ? "lg:grid-cols-2" : "max-w-2xl"}`}
       >
-        <div className="bg-white p-6 rounded-2xl shadow-sm border">
+        <div className="bg-white p-6 rounded-2xl shadow-sm">
           <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
             <Wrench className="w-5 h-5" />
             Input Servis Baru
@@ -727,7 +727,7 @@ export default function AdminDashboard() {
           </form>
         </div>
         {user?.role === "superadmin" && (
-          <div className="bg-white p-6 rounded-2xl shadow-sm border">
+          <div className="bg-white p-6 rounded-2xl shadow-sm">
             <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
               <Package className="w-5 h-5" />
               Tambah Produk Stok
@@ -835,7 +835,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Tabel Servis */}
-      <div className="bg-white rounded-2xl shadow-sm border overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
         <div className="p-6 border-b flex flex-col md:flex-row md:items-center justify-between gap-4">
           <h3 className="font-bold text-lg flex items-center gap-2">
             <ClipboardList className="w-5 h-5" />
@@ -1050,7 +1050,7 @@ export default function AdminDashboard() {
 
       {/* Tabel Produk */}
       {user?.role === "superadmin" && (
-        <div className="bg-white rounded-2xl shadow-sm border overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
           <div className="p-4 md:p-6 border-b flex flex-col md:flex-row md:items-center justify-between gap-4">
             <h3 className="font-bold text-lg flex items-center gap-2">
               <Package className="w-5 h-5" />

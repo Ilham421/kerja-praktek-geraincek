@@ -21,7 +21,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Admin / admin1234 (superadmin)
+-- admin / admin1234 (superadmin)
 INSERT INTO `users` (`id`, `username`, `password`, `role`, `created_at`) VALUES
 (1, 'admin', '$2b$10$VnubNtbOSBttLeUtAvqttOUlsQG8vmnRuWPSEoSR3YD.odVyqkvle', 'superadmin', NOW());
 
@@ -44,8 +44,7 @@ CREATE TABLE `activity_log` (
   KEY `idx_log_user` (`user_id`),
   KEY `idx_log_action` (`action`),
   KEY `idx_log_table` (`table_name`),
-  KEY `idx_log_date` (`created_at`),
-  CONSTRAINT `activity_log_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+  KEY `idx_log_date` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- ============================================
@@ -80,8 +79,7 @@ CREATE TABLE `products` (
   `created_by` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `created_by` (`created_by`),
-  KEY `idx_product_kategori` (`kategori`),
-  CONSTRAINT `products_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
+  KEY `idx_product_kategori` (`kategori`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- ============================================
@@ -106,15 +104,12 @@ CREATE TABLE `service_tickets` (
   KEY `created_by` (`created_by`),
   KEY `updated_by` (`updated_by`),
   KEY `idx_service_status` (`status`),
-  KEY `idx_service_tanggal` (`created_at`),
-  CONSTRAINT `service_tickets_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `service_tickets_ibfk_2` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
+  KEY `idx_service_tanggal` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- ============================================
 -- 6. TRIGGERS - SERVICE TICKETS
 -- ============================================
-DROP TRIGGER IF EXISTS `trg_servis_insert`;
 DELIMITER $$
 CREATE TRIGGER `trg_servis_insert` AFTER INSERT ON `service_tickets` FOR EACH ROW BEGIN
     INSERT INTO activity_log (user_id, username, action, table_name, record_id, description, new_value)
@@ -122,18 +117,16 @@ CREATE TRIGGER `trg_servis_insert` AFTER INSERT ON `service_tickets` FOR EACH RO
 END$$
 DELIMITER ;
 
-DROP TRIGGER IF EXISTS `trg_servis_update`;
 DELIMITER $$
 CREATE TRIGGER `trg_servis_update` AFTER UPDATE ON `service_tickets` FOR EACH ROW BEGIN
     DECLARE change_desc TEXT DEFAULT '';
     IF NEW.status != OLD.status THEN SET change_desc = CONCAT(change_desc, 'Status: ', OLD.status, ' menjadi ', NEW.status, '. '); END IF;
     IF NEW.kendala != OLD.kendala THEN SET change_desc = CONCAT(change_desc, 'Kendala: "', OLD.kendala, '" menjadi "', NEW.kendala, '". '); END IF;
-    IF NEW.estimasi_biaya != OLD.estimasi_biaya THEN SET change_desc = CONCAT(change_desc, 'Biaya: Rp', FORMAT(OLD.estimasi_biaya, 0), ' menjadi Rp', FORMAT(NEW.estimasi_biaya, 0), '. '); END IF;
+    IF NEW.estimasi_biaya != OLD.estimasi_biaya THEN SET change_desc = CONCAT(change_desc, 'Biaya: Rp', REPLACE(FORMAT(OLD.estimasi_biaya, 0), ',', '.'), ' menjadi Rp', REPLACE(FORMAT(NEW.estimasi_biaya, 0), ',', '.'), '. '); END IF;
     IF change_desc != '' THEN INSERT INTO activity_log (user_id, username, action, table_name, record_id, description, old_value, new_value) VALUES (NEW.updated_by, (SELECT username FROM users WHERE id = NEW.updated_by), 'UPDATE', 'service_tickets', NEW.id, CONCAT('Update servis [', NEW.kode_nota, ']: ', change_desc), JSON_OBJECT('status', OLD.status, 'kendala', OLD.kendala, 'estimasi_biaya', OLD.estimasi_biaya), JSON_OBJECT('status', NEW.status, 'kendala', NEW.kendala, 'estimasi_biaya', NEW.estimasi_biaya)); END IF;
 END$$
 DELIMITER ;
 
-DROP TRIGGER IF EXISTS `trg_servis_delete`;
 DELIMITER $$
 CREATE TRIGGER `trg_servis_delete` BEFORE DELETE ON `service_tickets` FOR EACH ROW BEGIN
     INSERT INTO activity_log (user_id, username, action, table_name, record_id, description, old_value)
@@ -144,7 +137,6 @@ DELIMITER ;
 -- ============================================
 -- 7. TRIGGERS - PRODUCTS
 -- ============================================
-DROP TRIGGER IF EXISTS `trg_product_insert`;
 DELIMITER $$
 CREATE TRIGGER `trg_product_insert` AFTER INSERT ON `products` FOR EACH ROW BEGIN
     INSERT INTO activity_log (user_id, username, action, table_name, record_id, description, new_value)
@@ -152,25 +144,31 @@ CREATE TRIGGER `trg_product_insert` AFTER INSERT ON `products` FOR EACH ROW BEGI
 END$$
 DELIMITER ;
 
-DROP TRIGGER IF EXISTS `trg_product_update`;
 DELIMITER $$
 CREATE TRIGGER `trg_product_update` AFTER UPDATE ON `products` FOR EACH ROW BEGIN
     DECLARE change_desc TEXT DEFAULT '';
-    IF NEW.nama_barang != OLD.nama_barang THEN SET change_desc = CONCAT(change_desc, 'Nama diubah. '); END IF;
-    IF NEW.kategori != OLD.kategori THEN SET change_desc = CONCAT(change_desc, 'Kategori diubah. '); END IF;
-    IF NEW.harga != OLD.harga THEN SET change_desc = CONCAT(change_desc, 'Harga: Rp', FORMAT(OLD.harga, 0), ' menjadi Rp', FORMAT(NEW.harga, 0), '. '); END IF;
+    IF NEW.nama_barang != OLD.nama_barang THEN SET change_desc = CONCAT(change_desc, 'Nama: "', OLD.nama_barang, '" menjadi "', NEW.nama_barang, '". '); END IF;
+    IF NEW.kategori != OLD.kategori THEN SET change_desc = CONCAT(change_desc, 'Kategori: "', OLD.kategori, '" menjadi "', NEW.kategori, '". '); END IF;
+    IF NEW.harga != OLD.harga THEN SET change_desc = CONCAT(change_desc, 'Harga: Rp', REPLACE(FORMAT(OLD.harga, 0), ',', '.'), ' menjadi Rp', REPLACE(FORMAT(NEW.harga, 0), ',', '.'), '. '); END IF;
     IF NEW.stok_jumlah != OLD.stok_jumlah THEN SET change_desc = CONCAT(change_desc, 'Stok: ', OLD.stok_jumlah, ' menjadi ', NEW.stok_jumlah, '. '); END IF;
     IF change_desc != '' THEN INSERT INTO activity_log (user_id, username, action, table_name, record_id, description, old_value, new_value) VALUES (@current_user_id, (SELECT username FROM users WHERE id = @current_user_id), 'UPDATE', 'products', NEW.id, CONCAT('Update produk [', NEW.nama_barang, ']: ', change_desc), JSON_OBJECT('nama_barang', OLD.nama_barang, 'kategori', OLD.kategori, 'harga', OLD.harga, 'stok_jumlah', OLD.stok_jumlah), JSON_OBJECT('nama_barang', NEW.nama_barang, 'kategori', NEW.kategori, 'harga', NEW.harga, 'stok_jumlah', NEW.stok_jumlah)); END IF;
 END$$
 DELIMITER ;
 
-DROP TRIGGER IF EXISTS `trg_product_delete`;
 DELIMITER $$
 CREATE TRIGGER `trg_product_delete` BEFORE DELETE ON `products` FOR EACH ROW BEGIN
     INSERT INTO activity_log (user_id, username, action, table_name, record_id, description, old_value)
     VALUES (@current_user_id, (SELECT username FROM users WHERE id = @current_user_id), 'DELETE', 'products', OLD.id, CONCAT('Hapus produk: ', OLD.nama_barang), JSON_OBJECT('nama_barang', OLD.nama_barang, 'kategori', OLD.kategori, 'harga', OLD.harga, 'stok_jumlah', OLD.stok_jumlah));
 END$$
 DELIMITER ;
+
+-- ============================================
+-- 8. CONSTRAINTS
+-- ============================================
+ALTER TABLE `activity_log` ADD CONSTRAINT `activity_log_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+ALTER TABLE `products` ADD CONSTRAINT `products_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+ALTER TABLE `service_tickets` ADD CONSTRAINT `service_tickets_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+ALTER TABLE `service_tickets` ADD CONSTRAINT `service_tickets_ibfk_2` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 COMMIT;
 

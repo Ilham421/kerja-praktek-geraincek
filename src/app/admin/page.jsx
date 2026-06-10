@@ -1117,37 +1117,33 @@ export default function AdminDashboard() {
             </table>
           </div>
           <div className="lg:hidden divide-y">
-            {!loading &&
-              filteredProducts.map((p) => (
-                <div
-                  key={p.id}
-                  className="p-4 flex items-center justify-between"
-                >
-                  <div>
-                    <p className="font-bold truncate">{p.nama_barang}</p>
-                    <p className="text-xs text-indigo-600 font-bold">
-                      Rp {parseInt(p.harga).toLocaleString("id-ID")}
-                    </p>
-                    <p className="text-[10px] text-slate-400">
-                      Stok: {p.stok_jumlah}
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleEditProduct(p)}
-                      className="p-2 text-blue-600 bg-blue-50 rounded-lg"
-                    >
-                      <Pencil className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteProduct(p.id)}
-                      className="p-2 text-red-600 bg-red-50 rounded-lg"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
+            {!loading && filteredProducts.map((p) => (
+              <div key={p.id} className="p-4 flex items-center justify-between gap-3 overflow-x-auto">
+                <div className="min-w-0 flex-1">
+                  <p className="font-bold text-sm break-words">{p.nama_barang}</p>
+                  <p className="text-xs text-indigo-600 font-bold mt-1">
+                    Rp {parseInt(p.harga).toLocaleString("id-ID")}
+                  </p>
+                  <p className="text-[10px] text-slate-400 mt-0.5">
+                    Stok: {p.stok_jumlah}
+                  </p>
                 </div>
-              ))}
+                <div className="flex gap-2 flex-shrink-0">
+                  <button
+                    onClick={() => handleEditProduct(p)}
+                    className="p-2 text-blue-600 bg-blue-50 rounded-lg"
+                  >
+                    <Pencil className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleDeleteProduct(p.id)}
+                    className="p-2 text-red-600 bg-red-50 rounded-lg"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
           {filteredProducts.length === 0 && !loading && (
             <div className="p-10 text-center text-slate-400">

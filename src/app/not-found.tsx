@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Home, ArrowLeft, Search } from "lucide-react";
+import NotFoundBackButton from "@/components/NotFoundBackButton";
 
 export default function NotFound() {
     return (
@@ -32,12 +33,7 @@ export default function NotFound() {
                     >
                         <Home className="w-4 h-4" /> Kembali ke Beranda
                     </Link>
-                    <button
-                        onClick={() => window.history.back()}
-                        className="inline-flex items-center justify-center gap-2 border-2 border-slate-300 text-slate-700 px-6 py-3 rounded-xl font-bold hover:bg-slate-100 transition"
-                    >
-                        <ArrowLeft className="w-4 h-4" /> Halaman Sebelumnya
-                    </button>
+                    <NotFoundBackButton />
                 </div>
 
                 {/* Footer kecil */}

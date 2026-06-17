@@ -33,6 +33,8 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [productCurrentPage, setProductCurrentPage] = useState(1);
+  const [productItemsPerPage, setProductItemsPerPage] = useState(5);
   const [editingProductId, setEditingProductId] = useState(null);
   const [productFile, setProductFile] = useState(null);
   const fileInputRef = useRef(null);
@@ -497,7 +499,8 @@ export default function AdminDashboard() {
     (s) =>
       s.nama_pelanggan.toLowerCase().includes(serviceSearch.toLowerCase()) ||
       s.kode_nota.toLowerCase().includes(serviceSearch.toLowerCase()) ||
-      s.tipe_perangkat.toLowerCase().includes(serviceSearch.toLowerCase()),
+      s.tipe_perangkat.toLowerCase().includes(serviceSearch.toLowerCase()) ||
+      s.status?.toLowerCase().includes(serviceSearch.toLowerCase()),
   );
   const filteredProducts = products.filter(
     (p) =>
@@ -511,9 +514,22 @@ export default function AdminDashboard() {
     startIndex + itemsPerPage,
   );
 
+  // Pagination untuk Produk
+  const productTotalPages = Math.ceil(filteredProducts.length / productItemsPerPage);
+  const productStartIndex = (productCurrentPage - 1) * productItemsPerPage;
+  const paginatedProducts = filteredProducts.slice(
+    productStartIndex,
+    productStartIndex + productItemsPerPage,
+  );
+
   useEffect(() => {
     setCurrentPage(1);
   }, [serviceSearch, itemsPerPage]);
+
+  // Reset halaman produk saat pencarian produk berubah
+  useEffect(() => {
+    setProductCurrentPage(1);
+  }, [productSearch, productItemsPerPage]);
   if (!mountedRef.current)
     return <div className="min-h-screen bg-slate-50 p-8">Loading...</div>;
 
@@ -844,7 +860,7 @@ export default function AdminDashboard() {
           <div className="relative">
             <input
               type="text"
-              placeholder="Cari..."
+              placeholder="Cari nama, nota, tipe, status..."
               className="pl-10 pr-4 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500 w-full md:w-64"
               value={serviceSearch}
               onChange={(e) => setServiceSearch(e.target.value)}
@@ -1080,7 +1096,7 @@ export default function AdminDashboard() {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {!loading &&
-                  filteredProducts.map((p) => (
+                  paginatedProducts.map((p) => (
                     <tr key={p.id} className="hover:bg-slate-50">
                       <td className="px-6 py-4 font-bold text-sm">
                         {p.nama_barang}
@@ -1117,7 +1133,7 @@ export default function AdminDashboard() {
             </table>
           </div>
           <div className="lg:hidden divide-y">
-            {!loading && filteredProducts.map((p) => (
+            {!loading && paginatedProducts.map((p) => (
               <div key={p.id} className="p-4 flex items-center justify-between gap-3 overflow-x-auto">
                 <div className="min-w-0 flex-1">
                   <p className="font-bold text-sm break-words">{p.nama_barang}</p>
@@ -1144,6 +1160,43 @@ export default function AdminDashboard() {
                 </div>
               </div>
             ))}
+          </div>
+          {/* Pagination Produk */}
+          <div className="p-4 border-t flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/50">
+            <div className="flex items-center gap-2 text-sm">
+              <span>Tampilkan</span>
+              <select
+                value={productItemsPerPage}
+                onChange={(e) => setProductItemsPerPage(Number(e.target.value))}
+                className="border rounded px-2 py-1"
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+              </select>
+              <span>data</span>
+            </div>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setProductCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={productCurrentPage === 1}
+                className="px-4 py-2 border rounded-lg text-sm disabled:opacity-50"
+              >
+                Sebelumnya
+              </button>
+              <span className="text-sm font-bold">
+                Hal {productCurrentPage} dari {productTotalPages || 1}
+              </span>
+              <button
+                onClick={() =>
+                  setProductCurrentPage((p) => Math.min(productTotalPages, p + 1))
+                }
+                disabled={productCurrentPage === productTotalPages || productTotalPages === 0}
+                className="px-4 py-2 border rounded-lg text-sm disabled:opacity-50"
+              >
+                Selanjutnya
+              </button>
+            </div>
           </div>
           {filteredProducts.length === 0 && !loading && (
             <div className="p-10 text-center text-slate-400">

@@ -12,7 +12,6 @@ import {
   Smartphone,
   FileText,
   Loader2,
-  ChevronRight,
 } from "lucide-react";
 
 export default function ServiceStatusTracker() {
@@ -172,7 +171,7 @@ export default function ServiceStatusTracker() {
   const style = status ? getStatusStyle(status.status) : null;
 
   return (
-    <div className="mx-auto max-w-2xl rounded-2xl border-2 border-blue-100 bg-blue-50 p-8">
+    <div className="mx-auto max-w-2xl rounded-2xl border-2 border-blue-100 bg-blue-50 p-4 sm:p-8">
       <h3 className="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
         <Search className="w-6 h-6 text-blue-600" /> Cek Status Servis
       </h3>
@@ -181,20 +180,20 @@ export default function ServiceStatusTracker() {
       </p>
 
       <form onSubmit={handleCheck} className="space-y-4">
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           <input
             type="text"
             suppressHydrationWarning
             value={trackingNumber}
             onChange={(e) => setTrackingNumber(e.target.value)}
             placeholder="Contoh: NC-100001"
-            className="flex-1 rounded-lg border-2 border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+            className="w-full sm:flex-1 rounded-lg border-2 border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
           />
           <button
             type="submit"
             suppressHydrationWarning
             disabled={loading}
-            className="rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition disabled:bg-gray-400 flex items-center gap-2"
+            className="w-full sm:w-auto rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition disabled:bg-gray-400 flex items-center justify-center gap-2 whitespace-nowrap"
           >
             {loading ? (
               <>
@@ -211,10 +210,10 @@ export default function ServiceStatusTracker() {
 
       {status && (
         <div
-          className={`mt-6 rounded-lg bg-white p-6 border-t-4 shadow-md ${style.bg}`}
+          className={`mt-6 rounded-lg bg-white p-4 sm:p-6 border-t-4 shadow-md ${style.bg}`}
         >
           {/* Header */}
-          <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 pb-3 border-b border-gray-100 gap-2">
             <div>
               <h4 className="text-lg font-bold text-gray-800">
                 Nota: {status.kode_nota}

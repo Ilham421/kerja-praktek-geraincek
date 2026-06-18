@@ -4,17 +4,36 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   CheckCircle,
-  DollarSign,
+  Banknote,
   Target,
   MessageCircle,
   ShoppingBag,
   Package,
   ExternalLink,
 } from "lucide-react";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 export default function StokPage() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Init AOS
+  useEffect(() => {
+    AOS.init({
+      duration: 600,
+      once: false,
+      easing: "ease-out",
+      offset: 50,
+    });
+  }, []);
+
+  // Refresh AOS setiap kali data produk berubah
+  useEffect(() => {
+    if (!loading && products.length > 0) {
+      AOS.refresh();
+    }
+  }, [loading, products]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -36,10 +55,18 @@ export default function StokPage() {
       {/* Page Header */}
       <section className="bg-gradient-to-r from-orange-600 to-orange-700 py-16">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <h1 className="text-4xl font-bold text-white mb-4 flex items-center gap-2">
+          <h1
+            className="text-4xl font-bold text-white mb-4 flex items-center gap-2"
+            data-aos="fade-down"
+            data-aos-duration="800"
+          >
             <ShoppingBag className="w-8 h-8" /> Stok & Aksesoris
           </h1>
-          <p className="text-lg text-orange-100 max-w-2xl">
+          <p
+            className="text-lg text-orange-100 max-w-2xl"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
             Jual beli handphone dan laptop bekas berkualitas, sparepart
             original, serta aksesori lengkap dengan harga terbaik.
           </p>
@@ -55,9 +82,11 @@ export default function StokPage() {
             </div>
           ) : (
             <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-              {products.map((product) => (
+              {products.map((product, index) => (
                 <div
                   key={product.id}
+                  data-aos="fade-up"
+                  data-aos-delay={index * 100}
                   className="group relative flex flex-col overflow-hidden rounded-2xl border-2 border-gray-100 bg-white shadow-sm transition duration-300 hover:scale-105 hover:shadow-xl"
                 >
                   {/* Badge Status */}
@@ -90,7 +119,7 @@ export default function StokPage() {
                       {product.nama_barang}
                     </h3>
                     <p className="mt-2 text-lg font-extrabold text-orange-600 flex items-center gap-1">
-                      <DollarSign className="w-4 h-4" />
+                      <Banknote className="w-4 h-4" />
                       Rp {parseInt(product.harga).toLocaleString("id-ID")}
                     </p>
 
@@ -114,7 +143,11 @@ export default function StokPage() {
       <section className="bg-gradient-to-r from-orange-50 to-yellow-50 py-16">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="grid gap-8 md:grid-cols-3">
-            <div className="rounded-lg bg-white p-8 shadow-sm">
+            <div
+              className="rounded-lg bg-white p-8 shadow-sm"
+              data-aos="fade-up"
+              data-aos-delay="0"
+            >
               <CheckCircle className="w-10 h-10 text-green-500 mb-3" />
               <h3 className="font-bold text-gray-900 mb-2">
                 Produk Berkualitas
@@ -123,14 +156,22 @@ export default function StokPage() {
                 Semua produk sudah dicek dan tested sebelum dijual
               </p>
             </div>
-            <div className="rounded-lg bg-white p-8 shadow-sm">
-              <DollarSign className="w-10 h-10 text-orange-500 mb-3" />
+            <div
+              className="rounded-lg bg-white p-8 shadow-sm"
+              data-aos="fade-up"
+              data-aos-delay="100"
+            >
+              <Banknote className="w-10 h-10 text-orange-500 mb-3" />
               <h3 className="font-bold text-gray-900 mb-2">Harga Kompetitif</h3>
               <p className="text-sm text-gray-600">
                 Harga terbaik dengan kualitas terjamin
               </p>
             </div>
-            <div className="rounded-lg bg-white p-8 shadow-sm">
+            <div
+              className="rounded-lg bg-white p-8 shadow-sm"
+              data-aos="fade-up"
+              data-aos-delay="200"
+            >
               <Target className="w-10 h-10 text-blue-500 mb-3" />
               <h3 className="font-bold text-gray-900 mb-2">
                 Garansi & Layanan
@@ -145,7 +186,11 @@ export default function StokPage() {
 
       {/* CTA */}
       <section className="bg-gradient-to-r from-orange-600 to-orange-700 py-16">
-        <div className="mx-auto max-w-7xl px-6 text-center lg:px-8">
+        <div
+          className="mx-auto max-w-7xl px-6 text-center lg:px-8"
+          data-aos="zoom-in"
+          data-aos-delay="300"
+        >
           <h2 className="text-3xl font-bold text-white mb-6">
             Cari Produk yang Anda Butuhkan?
           </h2>

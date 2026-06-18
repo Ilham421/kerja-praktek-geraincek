@@ -46,7 +46,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="mx-auto max-w-7xl px-6 py-24 lg:px-8">
         <div className="grid gap-12 md:grid-cols-2 md:items-center">
-          <div className="space-y-8">
+          <div className="space-y-8" data-aos="fade-right">
             <div>
               <div className="inline-flex rounded-full bg-blue-100 px-4 py-2 text-sm font-semibold text-blue-600 mb-4 items-center gap-1">
                 <Zap className="w-4 h-4" /> Solusi Service Terpercaya
@@ -67,7 +67,7 @@ export default function Home() {
                 <MessageCircle className="w-5 h-5" /> Konsultasi WhatsApp
               </a>
               <Link
-                href="#status"
+                href="/cek-status"
                 className="inline-flex items-center justify-center rounded-lg border-2 border-gray-300 px-8 py-4 text-lg font-semibold text-gray-900 hover:border-gray-400 hover:bg-gray-50 transition"
               >
                 Cek Status Servis
@@ -88,7 +88,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="relative">
+          <div className="relative" data-aos="fade-left" data-aos-delay="200">
             <div className="rounded-3xl bg-gradient-to-br from-blue-100 to-blue-50 p-8 shadow-2xl">
               <div className="rounded-2xl bg-white p-8 shadow-lg space-y-6">
                 <h3 className="text-2xl font-bold text-gray-900">
@@ -134,7 +134,10 @@ export default function Home() {
       {/* Services Section */}
       <section id="layanan" className="bg-gray-50 py-12 md:py-20">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mb-10 md:mb-16 space-y-4 text-center">
+          <div
+            className="mb-10 md:mb-16 space-y-4 text-center"
+            data-aos="fade-up"
+          >
             <p className="text-sm font-semibold uppercase tracking-widest text-blue-600">
               Layanan Kami
             </p>
@@ -143,9 +146,11 @@ export default function Home() {
             </h2>
           </div>
           <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-            {services.map((service) => (
+            {services.map((service, index) => (
               <div
                 key={service.title}
+                data-aos="fade-up"
+                data-aos-delay={index * 100}
                 className="rounded-2xl border-2 border-gray-100 bg-white p-8 text-center transition hover:-translate-y-2 hover:border-blue-300 hover:shadow-lg"
               >
                 <div className="mb-4">{service.icon}</div>
@@ -173,7 +178,7 @@ export default function Home() {
       <section className="py-20 bg-white">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
-            <div className="space-y-6">
+            <div className="space-y-6" data-aos="fade-right">
               <h2 className="text-4xl font-bold text-gray-900">
                 Reputasi Terpercaya Sejak 2023
               </h2>
@@ -183,15 +188,21 @@ export default function Home() {
                 pelanggan baru maupun lama.
               </p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div
+              className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+              data-aos="fade-left"
+              data-aos-delay="200"
+            >
               {[
                 "Garansi Resmi",
                 "Teknisi Bersertifikat",
                 "Suku Cadang Original",
                 "Tanpa Biaya Tersembunyi",
-              ].map((text) => (
+              ].map((text, index) => (
                 <div
                   key={text}
+                  data-aos="zoom-in"
+                  data-aos-delay={index * 100}
                   className="p-4 rounded-lg bg-blue-50 border border-blue-100 font-medium text-gray-800 flex items-center gap-2"
                 >
                   <Star className="w-5 h-5 text-blue-600 flex-shrink-0" />
@@ -207,6 +218,7 @@ export default function Home() {
       <section
         id="status"
         className="bg-gradient-to-br from-blue-50 to-white py-20"
+        data-aos="fade-up"
       >
         <div className="mx-auto max-w-7xl px-6 lg:px-8 text-center">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -220,7 +232,7 @@ export default function Home() {
       </section>
 
       {/* Contact & Location */}
-      <section id="kontak" className="py-20 bg-white">
+      <section id="kontak" className="py-20 bg-white" data-aos="fade-up">
         <ContactLocation />
         <div className="mt-20 max-w-2xl mx-auto px-6">
           <h2 className="text-3xl font-bold text-center mb-8">

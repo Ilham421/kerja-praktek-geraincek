@@ -53,8 +53,8 @@ export default function NavigationWrapper({ children }) {
                 Beranda
               </Link>
               <Link
-                href="/#layanan"
-                className={`text-sm font-medium transition ${pathname === "/#layanan" ? "text-blue-600" : "text-gray-600 hover:text-blue-600"}`}
+                href="/layanan"
+                className={`text-sm font-medium transition ${pathname === "/layanan" ? "text-blue-600" : "text-gray-600 hover:text-blue-600"}`}
               >
                 Layanan
               </Link>
@@ -65,14 +65,14 @@ export default function NavigationWrapper({ children }) {
                 Stok & Aksesoris
               </Link>
               <Link
-                href="/#status"
-                className={`text-sm font-medium transition ${pathname === "/#status" ? "text-blue-600" : "text-gray-600 hover:text-blue-600"}`}
+                href="/cek-status"
+                className={`text-sm font-medium transition ${pathname === "/cek-status" ? "text-blue-600" : "text-gray-600 hover:text-blue-600"}`}
               >
                 Cek Status
               </Link>
               <Link
-                href="/#kontak"
-                className={`text-sm font-medium transition ${pathname === "/#kontak" ? "text-blue-600" : "text-gray-600 hover:text-blue-600"}`}
+                href="/kontak"
+                className={`text-sm font-medium transition ${pathname === "/kontak" ? "text-blue-600" : "text-gray-600 hover:text-blue-600"}`}
               >
                 Kontak
               </Link>
@@ -99,7 +99,7 @@ export default function NavigationWrapper({ children }) {
                 Beranda
               </Link>
               <Link
-                href="/#layanan"
+                href="/layanan"
                 onClick={() => setIsMenuOpen(false)}
                 className="block text-base font-medium text-gray-600"
               >
@@ -113,14 +113,14 @@ export default function NavigationWrapper({ children }) {
                 Stok & Aksesoris
               </Link>
               <Link
-                href="/#status"
+                href="/cek-status"
                 onClick={() => setIsMenuOpen(false)}
                 className="block text-base font-medium text-gray-600"
               >
                 Cek Status
               </Link>
               <Link
-                href="/#kontak"
+                href="/kontak"
                 onClick={() => setIsMenuOpen(false)}
                 className="block text-base font-medium text-gray-600"
               >
@@ -157,7 +157,7 @@ export default function NavigationWrapper({ children }) {
               <ul className="space-y-2 text-sm text-gray-400">
                 <li>
                   <Link
-                    href="/#layanan"
+                    href="/layanan"
                     className="hover:text-white transition"
                   >
                     Layanan Servis
@@ -169,12 +169,12 @@ export default function NavigationWrapper({ children }) {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/#status" className="hover:text-white transition">
+                  <Link href="/cek-status" className="hover:text-white transition">
                     Cek Status
                   </Link>
                 </li>
                 <li>
-                  <Link href="/#kontak" className="hover:text-white transition">
+                  <Link href="/kontak" className="hover:text-white transition">
                     Konsultasi
                   </Link>
                 </li>
@@ -185,7 +185,7 @@ export default function NavigationWrapper({ children }) {
               <ul className="space-y-2 text-sm text-gray-400">
                 <li>
                   <Link
-                    href="/#layanan"
+                    href="/layanan"
                     className="hover:text-white transition"
                   >
                     Kenapa Pilih Kami
@@ -197,12 +197,12 @@ export default function NavigationWrapper({ children }) {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/#status" className="hover:text-white transition">
+                  <Link href="/cek-status" className="hover:text-white transition">
                     Tracking Servis
                   </Link>
                 </li>
                 <li>
-                  <Link href="/#kontak" className="hover:text-white transition">
+                  <Link href="/kontak" className="hover:text-white transition">
                     Form Kontak
                   </Link>
                 </li>

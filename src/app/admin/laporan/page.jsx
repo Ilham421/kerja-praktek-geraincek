@@ -14,6 +14,8 @@ import {
   PieChart,
   AlertTriangle,
 } from "lucide-react";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 function LaporanContent() {
   const searchParams = useSearchParams();
@@ -21,7 +23,22 @@ function LaporanContent() {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Helper: format tanggal ke YYYY-MM-DD
+  useEffect(() => {
+    AOS.init({
+      duration: 600,
+      once: true,
+      easing: "ease-out",
+      offset: 50,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      setTimeout(() => AOS.refresh(), 100);
+    }
+  }, [loading]);
+  // ------------------------
+
   const formatDate = (date) => {
     const y = date.getFullYear();
     const m = String(date.getMonth() + 1).padStart(2, "0");
@@ -29,7 +46,6 @@ function LaporanContent() {
     return `${y}-${m}-${d}`;
   };
 
-  // Auto: hari ini → 30 hari ke depan
   const today = new Date();
   const nextMonth = new Date(today);
   nextMonth.setDate(today.getDate() + 30);
@@ -178,12 +194,19 @@ function LaporanContent() {
       {/* HEADER + FILTER + DOWNLOAD */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="space-y-3 w-full md:w-auto">
-          <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
+          <h1
+            className="text-2xl font-bold text-slate-800 flex items-center gap-2"
+            data-aos="fade-down"
+          >
             <TrendingUp className="w-6 h-6" /> Laporan Pendapatan
           </h1>
 
           {/* Filter Tanggal */}
-          <div className="flex flex-wrap items-center gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+          <div
+            className="flex flex-wrap items-center gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200"
+            data-aos="fade-up"
+            data-aos-delay="100"
+          >
             <div className="flex items-center gap-2">
               <Calendar className="w-3.5 h-3.5 text-slate-400" />
               <span className="text-[10px] font-bold text-slate-400 uppercase">
@@ -216,6 +239,8 @@ function LaporanContent() {
           onClick={handleDownloadReport}
           suppressHydrationWarning
           className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-indigo-700 transition shadow-lg shadow-indigo-100 flex items-center gap-2 whitespace-nowrap w-full md:w-auto justify-center"
+          data-aos="fade-left"
+          data-aos-delay="200"
         >
           <Download className="w-5 h-5" /> Download PDF
         </button>
@@ -230,6 +255,8 @@ function LaporanContent() {
           width: "100%",
           fontFamily: "Arial, sans-serif",
         }}
+        data-aos="fade-up"
+        data-aos-delay="300"
       >
         {/* Kop Surat */}
         <div className="border-b-4 border-slate-900 pb-4 mb-8">
@@ -255,7 +282,11 @@ function LaporanContent() {
 
         {/* Ringkasan Omzet & Volume */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-8">
-          <div className="bg-indigo-50 p-4 md:p-6 rounded-2xl border border-indigo-100">
+          <div
+            className="bg-indigo-50 p-4 md:p-6 rounded-2xl border border-indigo-100"
+            data-aos="fade-up"
+            data-aos-delay="400"
+          >
             <p className="text-[10px] md:text-xs font-bold text-indigo-400 uppercase tracking-wider mb-1 flex items-center gap-1">
               <DollarSign className="w-3 h-3" /> Total Omzet Pendapatan
             </p>
@@ -267,7 +298,11 @@ function LaporanContent() {
               }).format(totalOmzet)}
             </p>
           </div>
-          <div className="bg-slate-50 p-4 md:p-6 rounded-2xl border border-slate-100">
+          <div
+            className="bg-slate-50 p-4 md:p-6 rounded-2xl border border-slate-100"
+            data-aos="fade-up"
+            data-aos-delay="500"
+          >
             <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 flex items-center gap-1">
               <Wrench className="w-3 h-3" /> Volume Servis
             </p>
@@ -280,7 +315,7 @@ function LaporanContent() {
         {/* Detail Statistik */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 mb-8">
           {/* Statistik Perangkat */}
-          <div>
+          <div data-aos="fade-up" data-aos-delay="600">
             <h3 className="text-sm md:text-lg font-bold text-slate-800 mb-3 md:mb-4 border-l-4 border-indigo-600 pl-3 md:pl-4 flex items-center gap-2">
               <Package className="w-4 h-4" /> Statistik Perangkat
             </h3>
@@ -324,7 +359,7 @@ function LaporanContent() {
           </div>
 
           {/* Ranking Kerusakan */}
-          <div>
+          <div data-aos="fade-up" data-aos-delay="700">
             <h3 className="text-sm md:text-lg font-bold text-slate-800 mb-3 md:mb-4 border-l-4 border-amber-500 pl-3 md:pl-4 flex items-center gap-2">
               <AlertTriangle className="w-4 h-4" /> Ranking Kerusakan
             </h3>
@@ -369,7 +404,11 @@ function LaporanContent() {
         </div>
 
         {/* Footer Laporan */}
-        <div className="mt-8 md:mt-12 pt-6 md:pt-8 border-t border-slate-100">
+        <div
+          className="mt-8 md:mt-12 pt-6 md:pt-8 border-t border-slate-100"
+          data-aos="fade-up"
+          data-aos-delay="800"
+        >
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-center md:text-left">
               <p className="text-[9px] md:text-xs text-slate-400 italic">

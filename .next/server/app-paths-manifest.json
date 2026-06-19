@@ -1,6 +1,13 @@
 {
+  "/api/auth/me/route": "app/api/auth/me/route.js",
+  "/api/users/route": "app/api/users/route.js",
+  "/api/servis/route": "app/api/servis/route.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/page": "app/page.js",
-  "/layanan/page": "app/layanan/page.js",
-  "/cek-status/page": "app/cek-status/page.js"
+  "/api/products/route": "app/api/products/route.js",
+  "/api/contacts/route": "app/api/contacts/route.js",
+  "/admin/page": "app/admin/page.js",
+  "/admin/log/page": "app/admin/log/page.js",
+  "/admin/contacts/page": "app/admin/contacts/page.js",
+  "/admin/users/page": "app/admin/users/page.js",
+  "/admin/laporan/page": "app/admin/laporan/page.js"
 }

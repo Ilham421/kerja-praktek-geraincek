@@ -10,12 +10,30 @@ import {
   Circle,
   CheckCircle2,
 } from "lucide-react";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 export default function ContactsPage() {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState(null);
   const router = useRouter();
+
+  useEffect(() => {
+    AOS.init({
+      duration: 600,
+      once: true,
+      easing: "ease-out",
+      offset: 50,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      setTimeout(() => AOS.refresh(), 100);
+    }
+  }, [loading]);
+  // -----------------------------
 
   useEffect(() => {
     fetch("/api/auth/me")
@@ -94,7 +112,7 @@ export default function ContactsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
+      <div data-aos="fade-down">
         <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
           <Mail className="w-6 h-6" /> Pesan Masuk
         </h2>
@@ -105,16 +123,22 @@ export default function ContactsPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-1 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        {/* Daftar Pesan */}
+        <div
+          className="lg:col-span-1 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden"
+          data-aos="fade-right"
+        >
           <div className="p-4 border-b border-slate-100">
             <h3 className="font-bold text-slate-800">Daftar Pesan</h3>
           </div>
           <div className="divide-y divide-slate-100 max-h-[600px] overflow-y-auto">
             {contacts.length > 0 ? (
-              contacts.map((c) => (
+              contacts.map((c, idx) => (
                 <div
                   key={c.id}
                   onClick={() => handleRead(c)}
+                  data-aos="fade-up"
+                  data-aos-delay={idx * 50}
                   className={`p-4 cursor-pointer hover:bg-slate-50 transition ${
                     selected?.id === c.id
                       ? "bg-indigo-50 border-l-4 border-indigo-600"
@@ -147,7 +171,11 @@ export default function ContactsPage() {
           </div>
         </div>
 
-        <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        {/* Detail Pesan */}
+        <div
+          className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200 p-6"
+          data-aos="fade-left"
+        >
           {selected ? (
             <div className="space-y-4">
               <div className="flex items-center justify-between">

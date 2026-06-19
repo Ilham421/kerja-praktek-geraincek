@@ -13,12 +13,30 @@ import {
   User,
   Layers,
 } from "lucide-react";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 export default function LogPage() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
   const router = useRouter();
+
+  useEffect(() => {
+    AOS.init({
+      duration: 600,
+      once: true,
+      easing: "ease-out",
+      offset: 50,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      setTimeout(() => AOS.refresh(), 100);
+    }
+  }, [loading]);
+  // ------------------------
 
   useEffect(() => {
     fetch("/api/auth/me")
@@ -147,7 +165,10 @@ export default function LogPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div
+        className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+        data-aos="fade-down"
+      >
         <div>
           <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
             <ClipboardList className="w-6 h-6" /> Log Aktivitas
@@ -203,9 +224,11 @@ export default function LogPage() {
             color: "bg-red-500",
             icon: <Trash2 className="w-4 h-4" />,
           },
-        ].map((stat) => (
+        ].map((stat, idx) => (
           <div
             key={stat.label}
+            data-aos="fade-up"
+            data-aos-delay={idx * 100}
             className="bg-white p-3 sm:p-4 rounded-xl border border-slate-200 hover:shadow-md transition-shadow"
           >
             <div className="flex items-center justify-between mb-1">
@@ -224,7 +247,10 @@ export default function LogPage() {
       </div>
 
       {/* DESKTOP TABLE */}
-      <div className="hidden md:block bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+      <div
+        className="hidden md:block bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden"
+        data-aos="fade-up"
+      >
         <div
           className="overflow-x-auto"
           style={{ WebkitOverflowScrolling: "touch" }}
@@ -241,9 +267,11 @@ export default function LogPage() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {filteredLogs.length > 0 ? (
-                filteredLogs.map((log) => (
+                filteredLogs.map((log, idx) => (
                   <tr
                     key={log.id}
+                    data-aos="fade-up"
+                    data-aos-delay={idx * 50}
                     className="hover:bg-slate-50 transition-colors"
                   >
                     <td className="px-4 py-3 text-xs text-slate-500 whitespace-nowrap">
@@ -297,9 +325,11 @@ export default function LogPage() {
       {/* MOBILE/TABLET CARD VIEW */}
       <div className="md:hidden space-y-3">
         {filteredLogs.length > 0 ? (
-          filteredLogs.map((log) => (
+          filteredLogs.map((log, idx) => (
             <div
               key={log.id}
+              data-aos="fade-up"
+              data-aos-delay={idx * 50}
               className={`bg-white rounded-2xl shadow-sm border-l-4 p-4 ${getActionBadgeColor(log.action)}`}
             >
               <div className="flex items-center justify-between mb-3">

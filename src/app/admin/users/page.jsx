@@ -13,12 +13,30 @@ import {
   ShieldAlert,
   Info,
 } from "lucide-react";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 export default function UserManagement() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
   const router = useRouter();
+
+  useEffect(() => {
+    AOS.init({
+      duration: 600,
+      once: true,
+      easing: "ease-out",
+      offset: 50,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      setTimeout(() => AOS.refresh(), 100);
+    }
+  }, [loading]);
+  // ------------------------
 
   const fetchUsers = async () => {
     try {
@@ -224,7 +242,10 @@ export default function UserManagement() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div
+        className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+        data-aos="fade-down"
+      >
         <div>
           <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
             <Users className="w-6 h-6" /> Manajemen User
@@ -242,7 +263,10 @@ export default function UserManagement() {
       </div>
 
       {/* Table Desktop */}
-      <div className="hidden md:block bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+      <div
+        className="hidden md:block bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden"
+        data-aos="fade-up"
+      >
         <table className="w-full text-left">
           <thead className="bg-slate-50 text-slate-500 text-xs font-bold uppercase">
             <tr>
@@ -340,11 +364,13 @@ export default function UserManagement() {
       </div>
 
       {/* Mobile Card View */}
-      <div className="md:hidden space-y-3">
+      <div className="md:hidden space-y-3" data-aos="fade-up">
         {users.length > 0 ? (
-          users.map((u) => (
+          users.map((u, idx) => (
             <div
               key={u.id}
+              data-aos="fade-up"
+              data-aos-delay={idx * 50}
               className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 space-y-3"
             >
               <div className="flex items-center justify-between">
@@ -406,7 +432,11 @@ export default function UserManagement() {
       </div>
 
       {/* Info Card */}
-      <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200">
+      <div
+        className="bg-slate-50 rounded-2xl p-4 border border-slate-200"
+        data-aos="fade-up"
+        data-aos-delay="200"
+      >
         <p className="text-xs text-slate-500">
           <span className="font-bold text-slate-700 flex items-center gap-1">
             <Info className="w-3 h-3" /> Info Role:

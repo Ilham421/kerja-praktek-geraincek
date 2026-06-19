@@ -14,13 +14,10 @@ import {
   Package,
   Plus,
   Wrench,
-  Smartphone,
-  Laptop,
-  HardDrive,
-  Headphones,
-  Upload,
   Save,
 } from "lucide-react";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 export default function AdminDashboard() {
   const [services, setServices] = useState([]);
@@ -54,6 +51,21 @@ export default function AdminDashboard() {
     gambar_url: "",
   });
 
+  useEffect(() => {
+    AOS.init({
+      duration: 600,
+      once: true,
+      easing: "ease-out",
+      offset: 50,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      setTimeout(() => AOS.refresh(), 100);
+    }
+  }, [loading]);
+
   const hitungHari = (dateString) => {
     if (!dateString) return "?";
     const mulai = new Date(dateString);
@@ -74,6 +86,16 @@ export default function AdminDashboard() {
       default:
         return "";
     }
+  };
+
+  // di dalam komponen AdminDashboard, sebelum return
+
+  // Fungsi validasi WhatsApp : hanya boleh angka
+  const handleWhatsAppChange = (e) => {
+    const rawValue = e.target.value;
+    // Hanya simpan karakter 0-9
+    const numericValue = rawValue.replace(/[^0-9]/g, "");
+    setFormData({ ...formData, no_whatsapp: numericValue });
   };
 
   const getStatusColor = (status) => {
@@ -514,8 +536,9 @@ export default function AdminDashboard() {
     startIndex + itemsPerPage,
   );
 
-  // Pagination untuk Produk
-  const productTotalPages = Math.ceil(filteredProducts.length / productItemsPerPage);
+  const productTotalPages = Math.ceil(
+    filteredProducts.length / productItemsPerPage,
+  );
   const productStartIndex = (productCurrentPage - 1) * productItemsPerPage;
   const paginatedProducts = filteredProducts.slice(
     productStartIndex,
@@ -526,10 +549,10 @@ export default function AdminDashboard() {
     setCurrentPage(1);
   }, [serviceSearch, itemsPerPage]);
 
-  // Reset halaman produk saat pencarian produk berubah
   useEffect(() => {
     setProductCurrentPage(1);
   }, [productSearch, productItemsPerPage]);
+
   if (!mountedRef.current)
     return <div className="min-h-screen bg-slate-50 p-8">Loading...</div>;
 
@@ -560,6 +583,7 @@ export default function AdminDashboard() {
           }
         }
       `}</style>
+
       <div
         id="print-area"
         className="hidden print:block p-8 text-slate-900 font-sans bg-white"
@@ -654,9 +678,11 @@ export default function AdminDashboard() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {stats.map((stat) => (
+        {stats.map((stat, idx) => (
           <div
             key={stat.label}
+            data-aos="fade-up"
+            data-aos-delay={idx * 100}
             className="bg-white p-6 rounded-2xl shadow-sm"
           >
             <div className="flex items-center justify-between mb-2">
@@ -678,7 +704,10 @@ export default function AdminDashboard() {
       <div
         className={`grid gap-8 ${user?.role === "superadmin" ? "lg:grid-cols-2" : "max-w-2xl"}`}
       >
-        <div className="bg-white p-6 rounded-2xl shadow-sm">
+        <div
+          data-aos="fade-right"
+          className="bg-white p-6 rounded-2xl shadow-sm"
+        >
           <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
             <Wrench className="w-5 h-5" />
             Input Servis Baru
@@ -696,12 +725,12 @@ export default function AdminDashboard() {
             />
             <input
               type="text"
-              placeholder="WhatsApp"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              placeholder="WhatsApp (hanya angka)"
               required
               value={formData.no_whatsapp}
-              onChange={(e) =>
-                setFormData({ ...formData, no_whatsapp: e.target.value })
-              }
+              onChange={handleWhatsAppChange}
               className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"
             />
             <input
@@ -743,7 +772,10 @@ export default function AdminDashboard() {
           </form>
         </div>
         {user?.role === "superadmin" && (
-          <div className="bg-white p-6 rounded-2xl shadow-sm">
+          <div
+            data-aos="fade-left"
+            className="bg-white p-6 rounded-2xl shadow-sm"
+          >
             <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
               <Package className="w-5 h-5" />
               Tambah Produk Stok
@@ -851,7 +883,10 @@ export default function AdminDashboard() {
       </div>
 
       {/* Tabel Servis */}
-      <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+      <div
+        data-aos="fade-up"
+        className="bg-white rounded-2xl shadow-sm overflow-hidden"
+      >
         <div className="p-6 border-b flex flex-col md:flex-row md:items-center justify-between gap-4">
           <h3 className="font-bold text-lg flex items-center gap-2">
             <ClipboardList className="w-5 h-5" />
@@ -1066,7 +1101,10 @@ export default function AdminDashboard() {
 
       {/* Tabel Produk */}
       {user?.role === "superadmin" && (
-        <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+        <div
+          data-aos="fade-up"
+          className="bg-white rounded-2xl shadow-sm overflow-hidden"
+        >
           <div className="p-4 md:p-6 border-b flex flex-col md:flex-row md:items-center justify-between gap-4">
             <h3 className="font-bold text-lg flex items-center gap-2">
               <Package className="w-5 h-5" />
@@ -1133,35 +1171,40 @@ export default function AdminDashboard() {
             </table>
           </div>
           <div className="lg:hidden divide-y">
-            {!loading && paginatedProducts.map((p) => (
-              <div key={p.id} className="p-4 flex items-center justify-between gap-3 overflow-x-auto">
-                <div className="min-w-0 flex-1">
-                  <p className="font-bold text-sm break-words">{p.nama_barang}</p>
-                  <p className="text-xs text-indigo-600 font-bold mt-1">
-                    Rp {parseInt(p.harga).toLocaleString("id-ID")}
-                  </p>
-                  <p className="text-[10px] text-slate-400 mt-0.5">
-                    Stok: {p.stok_jumlah}
-                  </p>
+            {!loading &&
+              paginatedProducts.map((p) => (
+                <div
+                  key={p.id}
+                  className="p-4 flex items-center justify-between gap-3 overflow-x-auto"
+                >
+                  <div className="min-w-0 flex-1">
+                    <p className="font-bold text-sm break-words">
+                      {p.nama_barang}
+                    </p>
+                    <p className="text-xs text-indigo-600 font-bold mt-1">
+                      Rp {parseInt(p.harga).toLocaleString("id-ID")}
+                    </p>
+                    <p className="text-[10px] text-slate-400 mt-0.5">
+                      Stok: {p.stok_jumlah}
+                    </p>
+                  </div>
+                  <div className="flex gap-2 flex-shrink-0">
+                    <button
+                      onClick={() => handleEditProduct(p)}
+                      className="p-2 text-blue-600 bg-blue-50 rounded-lg"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteProduct(p.id)}
+                      className="p-2 text-red-600 bg-red-50 rounded-lg"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
-                <div className="flex gap-2 flex-shrink-0">
-                  <button
-                    onClick={() => handleEditProduct(p)}
-                    className="p-2 text-blue-600 bg-blue-50 rounded-lg"
-                  >
-                    <Pencil className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteProduct(p.id)}
-                    className="p-2 text-red-600 bg-red-50 rounded-lg"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            ))}
+              ))}
           </div>
-          {/* Pagination Produk */}
           <div className="p-4 border-t flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/50">
             <div className="flex items-center gap-2 text-sm">
               <span>Tampilkan</span>
@@ -1189,9 +1232,14 @@ export default function AdminDashboard() {
               </span>
               <button
                 onClick={() =>
-                  setProductCurrentPage((p) => Math.min(productTotalPages, p + 1))
+                  setProductCurrentPage((p) =>
+                    Math.min(productTotalPages, p + 1),
+                  )
                 }
-                disabled={productCurrentPage === productTotalPages || productTotalPages === 0}
+                disabled={
+                  productCurrentPage === productTotalPages ||
+                  productTotalPages === 0
+                }
                 className="px-4 py-2 border rounded-lg text-sm disabled:opacity-50"
               >
                 Selanjutnya

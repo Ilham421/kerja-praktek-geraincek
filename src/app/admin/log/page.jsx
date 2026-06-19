@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import {
   ClipboardList,
@@ -12,6 +12,7 @@ import {
   Package,
   User,
   Layers,
+  Search,
 } from "lucide-react";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -20,6 +21,9 @@ export default function LogPage() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const router = useRouter();
 
   useEffect(() => {
@@ -36,7 +40,6 @@ export default function LogPage() {
       setTimeout(() => AOS.refresh(), 100);
     }
   }, [loading]);
-  // ------------------------
 
   useEffect(() => {
     fetch("/api/auth/me")
@@ -64,8 +67,39 @@ export default function LogPage() {
     }
   };
 
-  const filteredLogs =
-    filter === "all" ? logs : logs.filter((log) => log.action === filter);
+  // Filter berdasarkan aksi + search
+  const filteredLogs = useMemo(() => {
+    let result =
+      filter === "all" ? logs : logs.filter((log) => log.action === filter);
+
+    if (searchQuery.trim() !== "") {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(
+        (log) =>
+          log.username?.toLowerCase().includes(q) ||
+          log.action?.toLowerCase().includes(q) ||
+          log.table_name?.toLowerCase().includes(q) ||
+          log.description?.toLowerCase().includes(q) ||
+          log.created_at?.toLowerCase().includes(q) ||
+          log.record_id?.toString().includes(q),
+      );
+    }
+
+    return result;
+  }, [logs, filter, searchQuery]);
+
+  // Pagination
+  const totalPages = Math.ceil(filteredLogs.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedLogs = filteredLogs.slice(
+    startIndex,
+    startIndex + itemsPerPage,
+  );
+
+  // Reset halaman saat filter atau search berubah
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filter, searchQuery, itemsPerPage]);
 
   const getActionColor = (action) => {
     switch (action) {
@@ -178,22 +212,40 @@ export default function LogPage() {
           </p>
         </div>
 
-        {/* Filter Buttons */}
-        <div className="flex flex-wrap gap-2">
-          {["all", "INSERT", "UPDATE", "DELETE"].map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap flex items-center gap-1 ${
-                filter === f
-                  ? "bg-indigo-600 text-white shadow-md"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-              }`}
-            >
-              {f === "all" ? <Layers className="w-3 h-3" /> : getActionIcon(f)}
-              {f === "all" ? "Semua" : f}
-            </button>
-          ))}
+        <div className="flex flex-col sm:flex-row gap-2">
+          {/* Search Input */}
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Cari log..."
+              className="pl-9 pr-4 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500 w-full sm:w-48"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <Search className="absolute left-2.5 top-2.5 text-slate-400 w-4 h-4" />
+          </div>
+
+          {/* Filter Buttons */}
+          <div className="flex flex-wrap gap-2">
+            {["all", "INSERT", "UPDATE", "DELETE"].map((f) => (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap flex items-center gap-1 ${
+                  filter === f
+                    ? "bg-indigo-600 text-white shadow-md"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                {f === "all" ? (
+                  <Layers className="w-3 h-3" />
+                ) : (
+                  getActionIcon(f)
+                )}
+                {f === "all" ? "Semua" : f}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -266,8 +318,8 @@ export default function LogPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {filteredLogs.length > 0 ? (
-                filteredLogs.map((log, idx) => (
+              {paginatedLogs.length > 0 ? (
+                paginatedLogs.map((log, idx) => (
                   <tr
                     key={log.id}
                     data-aos="fade-up"
@@ -311,21 +363,62 @@ export default function LogPage() {
                     colSpan={5}
                     className="px-4 py-10 text-center text-slate-400"
                   >
-                    {filter === "all"
+                    {filter === "all" && !searchQuery
                       ? "Belum ada aktivitas tercatat"
-                      : `Tidak ada log ${filter}`}
+                      : "Tidak ada log yang cocok"}
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
+        {filteredLogs.length > 0 && (
+          <div className="p-4 border-t flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/50">
+            <div className="flex items-center gap-2 text-sm">
+              <span>Tampilkan</span>
+              <select
+                value={itemsPerPage}
+                onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                className="border rounded px-2 py-1"
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+                <option value={50}>50</option>
+              </select>
+              <span>data</span>
+            </div>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="px-4 py-2 border rounded-lg text-sm disabled:opacity-50"
+              >
+                Sebelumnya
+              </button>
+              <span className="text-sm font-bold">
+                Hal {currentPage} dari {totalPages || 1}
+              </span>
+              <button
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(totalPages, p + 1))
+                }
+                disabled={currentPage === totalPages || totalPages === 0}
+                className="px-4 py-2 border rounded-lg text-sm disabled:opacity-50"
+              >
+                Selanjutnya
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* MOBILE/TABLET CARD VIEW */}
       <div className="md:hidden space-y-3">
-        {filteredLogs.length > 0 ? (
-          filteredLogs.map((log, idx) => (
+        {paginatedLogs.length > 0 ? (
+          paginatedLogs.map((log, idx) => (
             <div
               key={log.id}
               data-aos="fade-up"
@@ -367,16 +460,53 @@ export default function LogPage() {
           ))
         ) : (
           <div className="text-center py-10 text-slate-400 bg-white rounded-2xl">
-            Belum ada aktivitas tercatat
+            {filter === "all" && !searchQuery
+              ? "Belum ada aktivitas tercatat"
+              : "Tidak ada log yang cocok"}
+          </div>
+        )}
+
+        {/* Mobile Pagination */}
+        {filteredLogs.length > 0 && (
+          <div className="p-4 border-t flex flex-col items-center justify-between gap-4 bg-slate-50/50 rounded-2xl">
+            <div className="flex items-center gap-2 text-sm">
+              <span>Tampilkan</span>
+              <select
+                value={itemsPerPage}
+                onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                className="border rounded px-2 py-1"
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+                <option value={50}>50</option>
+              </select>
+              <span>data</span>
+            </div>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="px-4 py-2 border rounded-lg text-sm disabled:opacity-50"
+              >
+                Sebelumnya
+              </button>
+              <span className="text-sm font-bold">
+                Hal {currentPage} dari {totalPages || 1}
+              </span>
+              <button
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(totalPages, p + 1))
+                }
+                disabled={currentPage === totalPages || totalPages === 0}
+                className="px-4 py-2 border rounded-lg text-sm disabled:opacity-50"
+              >
+                Selanjutnya
+              </button>
+            </div>
           </div>
         )}
       </div>
-
-      {filteredLogs.length === 0 && (
-        <div className="hidden md:block text-center py-10 text-slate-400 bg-white rounded-2xl border border-slate-200">
-          Belum ada aktivitas tercatat
-        </div>
-      )}
     </div>
   );
 }

@@ -18,7 +18,7 @@ async function getAuth(request) {
   }
 }
 
-// ✅ GET: Ambil semua produk (publik)
+// GET: Ambil semua produk (publik)
 export async function GET() {
   try {
     const [rows] = await db.query(
@@ -34,7 +34,7 @@ export async function GET() {
   }
 }
 
-// ✅ POST: Tambah produk (SuperAdmin only, dengan created_by)
+// POST: Tambah produk (SuperAdmin only, dengan created_by)
 export async function POST(request) {
   const auth = await getAuth(request);
   if (!auth || auth.role !== "superadmin") {
@@ -73,7 +73,7 @@ export async function POST(request) {
       gambar_url = `/uploads/${fileName}`;
     }
 
-    // ✅ Insert dengan created_by (trigger akan auto-log)
+    // Insert dengan created_by (trigger akan auto-log)
     const [result] = await db.query(
       "INSERT INTO products (nama_barang, kategori, harga, stok_jumlah, link_shopee, gambar_url, created_by) VALUES (?, ?, ?, ?, ?, ?, ?)",
       [
@@ -103,7 +103,7 @@ export async function POST(request) {
   }
 }
 
-// ✅ PUT: Update produk (SuperAdmin only, dengan session variable)
+// PUT: Update produk (SuperAdmin only, dengan session variable)
 export async function PUT(request) {
   const auth = await getAuth(request);
   if (!auth || auth.role !== "superadmin") {
@@ -128,7 +128,7 @@ export async function PUT(request) {
       );
     }
 
-    // ✅ SET session variable untuk trigger UPDATE
+    // SET session variable untuk trigger UPDATE
     await db.query("SET @current_user_id = ?", [auth.id]);
 
     // Upload file baru jika ada
@@ -165,7 +165,7 @@ export async function PUT(request) {
   }
 }
 
-// ✅ DELETE: Hapus produk (dengan session variable untuk trigger)
+// DELETE: Hapus produk (dengan session variable untuk trigger)
 export async function DELETE(request) {
   const auth = await getAuth(request);
   if (!auth || auth.role !== "superadmin") {
@@ -183,7 +183,7 @@ export async function DELETE(request) {
   }
 
   try {
-    // ✅ SET session variable untuk trigger DELETE
+    // SET session variable untuk trigger DELETE
     await db.query("SET @current_user_id = ?", [auth.id]);
 
     await db.query("DELETE FROM products WHERE id = ?", [id]);

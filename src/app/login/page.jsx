@@ -1,18 +1,33 @@
 "use client";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { AlertTriangle } from "lucide-react";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [info, setInfo] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Tampilkan pesan jika user dihapus atau sesi berakhir
+  useEffect(() => {
+    if (searchParams.get("deleted") === "true") {
+      setInfo("Akun Anda telah dihapus oleh SuperAdmin. Silakan hubungi administrator.");
+    }
+    if (searchParams.get("sessionExpired") === "true") {
+      setInfo("Sesi Anda telah berakhir. Silakan login kembali.");
+    }
+  }, [searchParams]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
+    setInfo("");
 
     const res = await fetch("/api/auth/login", {
       method: "POST",
@@ -42,6 +57,15 @@ export default function LoginPage() {
           <p className="text-slate-500 mt-2">Panel Administrator</p>
         </div>
 
+        {/* Info message (akun dihapus / sesi berakhir) */}
+        {info && (
+          <div className="bg-amber-50 border-l-4 border-amber-500 text-amber-700 p-4 mb-6 rounded-r-lg text-sm flex items-center gap-2">
+            <AlertTriangle className="w-5 h-5 flex-shrink-0" />
+            <span>{info}</span>
+          </div>
+        )}
+
+        {/* Error message */}
         {error && (
           <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-r-lg text-sm">
             {error}
@@ -73,7 +97,7 @@ export default function LoginPage() {
               placeholder="••••••••"
             />
           </div>
-          <button 
+          <button
             disabled={isLoading}
             suppressHydrationWarning
             className="w-full bg-indigo-600 text-white font-bold py-4 rounded-xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 disabled:bg-indigo-300"

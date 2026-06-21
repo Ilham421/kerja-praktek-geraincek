@@ -13,7 +13,6 @@ import {
   Users,
   TrendingUp,
   ClipboardList,
-  ChevronLeft,
 } from "lucide-react";
 
 function AdminHeader({
@@ -117,10 +116,45 @@ export default function AdminLayout({ children }) {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  // ✅ Cek user & handle user dihapus
   useEffect(() => {
     fetch("/api/auth/me")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => setUser(data));
+      .then((res) => {
+        if (res.status === 401) {
+          return res.json().then((data) => {
+            if (data.deleted) {
+              router.push("/login?deleted=true");
+            } else {
+              router.push("/login?sessionExpired=true");
+            }
+            return null;
+          });
+        }
+        return res.json();
+      })
+      .then((data) => {
+        if (data) setUser(data);
+      })
+      .catch(() => {
+        router.push("/login");
+      });
+  }, []);
+
+  // ✅ Cek berkala setiap 30 detik
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch("/api/auth/me");
+        if (res.status === 401) {
+          const data = await res.json();
+          if (data.deleted) {
+            router.push("/login?deleted=true");
+          }
+        }
+      } catch {}
+    }, 30000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const handleLogout = async (confirm = true) => {
@@ -165,11 +199,7 @@ export default function AdminLayout({ children }) {
       });
       if (res.ok) {
         if (formValues.password && formValues.password.trim() !== "") {
-          await Swal.fire(
-            "Berhasil!",
-            "Password diubah. Silakan login kembali.",
-            "success",
-          );
+          await Swal.fire("Berhasil!", "Password diubah. Silakan login kembali.", "success");
           handleLogout(false);
         } else {
           Swal.fire("Berhasil!", "Profil telah diperbarui.", "success");
@@ -184,33 +214,13 @@ export default function AdminLayout({ children }) {
   };
 
   const menuItems = [
-    {
-      name: "Dashboard",
-      href: "/admin",
-      icon: <BarChart3 className="w-5 h-5" />,
-    },
+    { name: "Dashboard", href: "/admin", icon: <BarChart3 className="w-5 h-5" /> },
     ...(user?.role === "superadmin"
       ? [
-          {
-            name: "Pesan Masuk",
-            href: "/admin/contacts",
-            icon: <Mail className="w-5 h-5" />,
-          },
-          {
-            name: "Manajemen User",
-            href: "/admin/users",
-            icon: <Users className="w-5 h-5" />,
-          },
-          {
-            name: "Laporan",
-            href: "/admin/laporan",
-            icon: <TrendingUp className="w-5 h-5" />,
-          },
-          {
-            name: "Log Aktivitas",
-            href: "/admin/log",
-            icon: <ClipboardList className="w-5 h-5" />,
-          },
+          { name: "Pesan Masuk", href: "/admin/contacts", icon: <Mail className="w-5 h-5" /> },
+          { name: "Manajemen User", href: "/admin/users", icon: <Users className="w-5 h-5" /> },
+          { name: "Laporan", href: "/admin/laporan", icon: <TrendingUp className="w-5 h-5" /> },
+          { name: "Log Aktivitas", href: "/admin/log", icon: <ClipboardList className="w-5 h-5" /> },
         ]
       : []),
   ];
@@ -224,19 +234,21 @@ export default function AdminLayout({ children }) {
         />
       )}
       <aside
-        className={`w-64 bg-slate-900 text-slate-300 flex flex-col fixed h-full z-[70] transition-transform duration-300 ease-in-out lg:translate-x-0 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
+        className={`w-64 bg-slate-900 text-slate-300 flex flex-col fixed h-full z-[70] transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
       >
         <div className="p-6 border-b border-slate-800">
-          <h1 className="text-xl font-bold text-white uppercase tracking-wider">
-            Ncek Admin
-          </h1>
+          <h1 className="text-xl font-bold text-white uppercase tracking-wider">Ncek Admin</h1>
         </div>
         <nav className="flex-1 p-4 space-y-2">
           {menuItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${pathname === item.href ? "bg-blue-600 text-white" : "hover:bg-slate-800 hover:text-white"}`}
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                pathname === item.href ? "bg-blue-600 text-white" : "hover:bg-slate-800 hover:text-white"
+              }`}
               onClick={() => setIsSidebarOpen(false)}
             >
               <span>{item.icon}</span>
@@ -245,10 +257,7 @@ export default function AdminLayout({ children }) {
           ))}
         </nav>
         <div className="p-4 border-t border-slate-800">
-          <Link
-            href="/"
-            className="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white"
-          >
+          <Link href="/" className="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white">
             <LogOut className="w-5 h-5" />
             <span>Keluar ke Web</span>
           </Link>

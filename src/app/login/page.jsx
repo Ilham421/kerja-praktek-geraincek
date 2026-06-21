@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AlertTriangle } from "lucide-react";
 
-export default function LoginPage() {
+// Komponen terpisah untuk useSearchParams
+function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -107,5 +108,20 @@ export default function LoginPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+// Komponen utama dibungkus Suspense
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-slate-900">
+          <p className="text-white">Memuat...</p>
+        </div>
+      }
+    >
+      <LoginForm />
+    </Suspense>
   );
 }

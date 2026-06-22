@@ -12,7 +12,7 @@ export default function CekStatusPage() {
   useEffect(() => {
     AOS.init({
       duration: 600,
-      once: false,
+      once: true,
       easing: "ease-out",
       offset: 50,
     });

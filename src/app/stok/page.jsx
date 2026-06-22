@@ -22,7 +22,7 @@ export default function StokPage() {
   useEffect(() => {
     AOS.init({
       duration: 600,
-      once: false,
+      once: true,
       easing: "ease-out",
       offset: 50,
     });

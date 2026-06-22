@@ -35,11 +35,7 @@ export default function LogPage() {
     });
   }, []);
 
-  useEffect(() => {
-    if (!loading) {
-      setTimeout(() => AOS.refresh(), 100);
-    }
-  }, [loading]);
+  // useEffect refresh AOS dihapus
 
   useEffect(() => {
     fetch("/api/auth/me")
@@ -67,7 +63,6 @@ export default function LogPage() {
     }
   };
 
-  // Filter berdasarkan aksi + search
   const filteredLogs = useMemo(() => {
     let result =
       filter === "all" ? logs : logs.filter((log) => log.action === filter);
@@ -88,7 +83,6 @@ export default function LogPage() {
     return result;
   }, [logs, filter, searchQuery]);
 
-  // Pagination
   const totalPages = Math.ceil(filteredLogs.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedLogs = filteredLogs.slice(
@@ -96,7 +90,6 @@ export default function LogPage() {
     startIndex + itemsPerPage,
   );
 
-  // Reset halaman saat filter atau search berubah
   useEffect(() => {
     setCurrentPage(1);
   }, [filter, searchQuery, itemsPerPage]);
@@ -213,7 +206,6 @@ export default function LogPage() {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-2">
-          {/* Search Input */}
           <div className="relative">
             <input
               type="text"
@@ -225,7 +217,6 @@ export default function LogPage() {
             <Search className="absolute left-2.5 top-2.5 text-slate-400 w-4 h-4" />
           </div>
 
-          {/* Filter Buttons */}
           <div className="flex flex-wrap gap-2">
             {["all", "INSERT", "UPDATE", "DELETE"].map((f) => (
               <button
@@ -319,11 +310,9 @@ export default function LogPage() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {paginatedLogs.length > 0 ? (
-                paginatedLogs.map((log, idx) => (
+                paginatedLogs.map((log) => (
                   <tr
                     key={log.id}
-                    data-aos="fade-up"
-                    data-aos-delay={idx * 50}
                     className="hover:bg-slate-50 transition-colors"
                   >
                     <td className="px-4 py-3 text-xs text-slate-500 whitespace-nowrap">
@@ -418,11 +407,9 @@ export default function LogPage() {
       {/* MOBILE/TABLET CARD VIEW */}
       <div className="md:hidden space-y-3">
         {paginatedLogs.length > 0 ? (
-          paginatedLogs.map((log, idx) => (
+          paginatedLogs.map((log) => (
             <div
               key={log.id}
-              data-aos="fade-up"
-              data-aos-delay={idx * 50}
               className={`bg-white rounded-2xl shadow-sm border-l-4 p-4 ${getActionBadgeColor(log.action)}`}
             >
               <div className="flex items-center justify-between mb-3">

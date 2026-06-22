@@ -28,12 +28,7 @@ export default function ContactsPage() {
     });
   }, []);
 
-  useEffect(() => {
-    if (!loading) {
-      setTimeout(() => AOS.refresh(), 100);
-    }
-  }, [loading]);
-  // -----------------------------
+  // useEffect refresh dihapus agar tidak memicu AOS ulang
 
   useEffect(() => {
     fetch("/api/auth/me")
@@ -133,12 +128,10 @@ export default function ContactsPage() {
           </div>
           <div className="divide-y divide-slate-100 max-h-[600px] overflow-y-auto">
             {contacts.length > 0 ? (
-              contacts.map((c, idx) => (
+              contacts.map((c) => (
                 <div
                   key={c.id}
                   onClick={() => handleRead(c)}
-                  data-aos="fade-up"
-                  data-aos-delay={idx * 50}
                   className={`p-4 cursor-pointer hover:bg-slate-50 transition ${
                     selected?.id === c.id
                       ? "bg-indigo-50 border-l-4 border-indigo-600"

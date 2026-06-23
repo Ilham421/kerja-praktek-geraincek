@@ -40,15 +40,15 @@ export async function middleware(request) {
         );
       }
 
-      // Cek apakah user masih ada di database
+      // 🔧 PERBAIKAN: Gunakan base URL dari env, fallback ke origin
       try {
-        const res = await fetch(`${request.nextUrl.origin}/api/auth/me`, {
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || request.nextUrl.origin;
+        const res = await fetch(`${baseUrl}/api/auth/me`, {
           headers: { Cookie: `admin_token=${token}` },
         });
 
         if (res.status === 401) {
           const data = await res.json();
-          // User dihapus → redirect ke login dengan parameter deleted
           const response = NextResponse.redirect(
             new URL("/login?deleted=true", request.url)
           );
@@ -56,8 +56,9 @@ export async function middleware(request) {
           return response;
         }
       } catch (fetchErr) {
-        // Jika fetch gagal, biarkan user tetap akses
-        console.error("Middleware user check failed:", fetchErr);
+        // Jika fetch gagal, log sekali dan biarkan akses
+        console.warn("Middleware: Gagal cek user, akses tetap diizinkan.");
+        // Bisa juga tambahkan logic lain jika perlu
       }
 
       return NextResponse.next();

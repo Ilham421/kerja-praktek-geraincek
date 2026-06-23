@@ -1,4 +1,4 @@
 node_modules
 .next
 *.sql
-*.env
+.env

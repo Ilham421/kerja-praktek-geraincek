@@ -12,7 +12,7 @@ export async function middleware(request) {
 
   // Logic 2: Proteksi folder /admin
   if (pathname.startsWith("/admin")) {
-    if (!token) {
+    if (!token) { 
       return NextResponse.redirect(new URL("/login", request.url));
     }
 

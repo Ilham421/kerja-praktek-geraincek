@@ -15,6 +15,7 @@ import {
   ClipboardList,
 } from "lucide-react";
 
+// ===== KOMPONEN HEADER (tidak berubah) =====
 function AdminHeader({
   user,
   isProfileOpen,
@@ -27,6 +28,7 @@ function AdminHeader({
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  // Menampilkan notifikasi dari query parameter
   useEffect(() => {
     if (searchParams.get("accessDenied") === "true") {
       Swal.fire({
@@ -48,6 +50,17 @@ function AdminHeader({
       });
       const newSearchParams = new URLSearchParams(searchParams.toString());
       newSearchParams.delete("sessionExpired");
+      router.replace(`${pathname}?${newSearchParams.toString()}`);
+    }
+    if (searchParams.get("deleted") === "true") {
+      Swal.fire({
+        title: "Akun Dihapus!",
+        text: "Akun Anda telah dihapus oleh administrator.",
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+      });
+      const newSearchParams = new URLSearchParams(searchParams.toString());
+      newSearchParams.delete("deleted");
       router.replace(`${pathname}?${newSearchParams.toString()}`);
     }
   }, [searchParams, router, pathname]);
@@ -109,6 +122,7 @@ function AdminHeader({
   );
 }
 
+// ===== LAYOUT UTAMA =====
 export default function AdminLayout({ children }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -116,47 +130,81 @@ export default function AdminLayout({ children }) {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // ✅ Cek user & handle user dihapus
+  // ===== 1. CEK USER SAAT PERTAMA KALI LOAD =====
   useEffect(() => {
-    fetch("/api/auth/me")
-      .then((res) => {
+    let isMounted = true;
+
+    const checkUser = async () => {
+      try {
+        const res = await fetch("/api/auth/me");
         if (res.status === 401) {
-          return res.json().then((data) => {
+          const data = await res.json();
+          // Hapus cookie dengan memanggil logout
+          await fetch("/api/auth/logout", { method: "POST" });
+          if (isMounted) {
             if (data.deleted) {
               router.push("/login?deleted=true");
             } else {
               router.push("/login?sessionExpired=true");
             }
-            return null;
-          });
+          }
+          return;
         }
-        return res.json();
-      })
-      .then((data) => {
-        if (data) setUser(data);
-      })
-      .catch(() => {
-        router.push("/login");
-      });
-  }, []);
+        const data = await res.json();
+        if (isMounted) setUser(data);
+      } catch (error) {
+        if (isMounted) router.push("/login");
+      }
+    };
 
-  // ✅ Cek berkala setiap 30 detik
+    checkUser();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [router]);
+
+  // ===== 2. POLLING SETIAP 30 DETIK (DENGAN STOP SAAT 401) =====
   useEffect(() => {
-    const interval = setInterval(async () => {
+    let intervalId = null;
+    let isActive = true;
+
+    const pollUser = async () => {
+      if (!isActive) return;
       try {
         const res = await fetch("/api/auth/me");
         if (res.status === 401) {
           const data = await res.json();
-          if (data.deleted) {
-            router.push("/login?deleted=true");
+          // Hapus cookie
+          await fetch("/api/auth/logout", { method: "POST" });
+          if (isActive) {
+            clearInterval(intervalId); // hentikan polling
+            if (data.deleted) {
+              router.push("/login?deleted=true");
+            } else {
+              router.push("/login?sessionExpired=true");
+            }
           }
+        } else {
+          // Jika response ok, update user (bisa jadi data berubah)
+          const data = await res.json();
+          if (isActive) setUser(data);
         }
-      } catch {}
-    }, 30000);
+      } catch (error) {
+        // Biarkan polling tetap berjalan, jangan redirect karena bisa jadi masalah jaringan
+        console.warn("Polling user gagal:", error);
+      }
+    };
 
-    return () => clearInterval(interval);
-  }, []);
+    intervalId = setInterval(pollUser, 30000);
 
+    return () => {
+      isActive = false;
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [router]);
+
+  // ===== FUNGSI LOGOUT =====
   const handleLogout = async (confirm = true) => {
     if (confirm) {
       const result = await Swal.fire({
@@ -177,10 +225,14 @@ export default function AdminLayout({ children }) {
     }
   };
 
+  // ===== FUNGSI SETTINGS (ubah profil) =====
   const handleSettings = async () => {
     const { value: formValues } = await Swal.fire({
       title: "Pengaturan Profil",
-      html: `<input id="swal-username" class="swal2-input" placeholder="Username" value="${user?.username}"><input id="swal-password" type="password" class="swal2-input" placeholder="Password Baru (Kosongkan jika tetap)">`,
+      html: `
+        <input id="swal-username" class="swal2-input" placeholder="Username" value="${user?.username || ""}">
+        <input id="swal-password" type="password" class="swal2-input" placeholder="Password Baru (Kosongkan jika tetap)">
+      `,
       focusConfirm: false,
       showCancelButton: true,
       confirmButtonText: "Simpan",
@@ -191,28 +243,40 @@ export default function AdminLayout({ children }) {
         password: document.getElementById("swal-password").value,
       }),
     });
+
     if (formValues) {
-      const res = await fetch("/api/users/profile", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formValues),
-      });
-      if (res.ok) {
-        if (formValues.password && formValues.password.trim() !== "") {
-          await Swal.fire("Berhasil!", "Password diubah. Silakan login kembali.", "success");
-          handleLogout(false);
+      try {
+        const res = await fetch("/api/users/profile", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formValues),
+        });
+        if (res.ok) {
+          if (formValues.password && formValues.password.trim() !== "") {
+            await Swal.fire(
+              "Berhasil!",
+              "Password diubah. Silakan login kembali.",
+              "success"
+            );
+            handleLogout(false);
+          } else {
+            Swal.fire("Berhasil!", "Profil telah diperbarui.", "success");
+            const meRes = await fetch("/api/auth/me");
+            if (meRes.ok) {
+              const data = await meRes.json();
+              setUser(data);
+            }
+          }
         } else {
-          Swal.fire("Berhasil!", "Profil telah diperbarui.", "success");
-          fetch("/api/auth/me")
-            .then((r) => r.json())
-            .then((d) => setUser(d));
+          Swal.fire("Gagal!", "Gagal memperbarui profil.", "error");
         }
-      } else {
-        Swal.fire("Gagal!", "Gagal memperbarui profil.", "error");
+      } catch (error) {
+        Swal.fire("Error!", "Terjadi kesalahan koneksi.", "error");
       }
     }
   };
 
+  // ===== MENU SIDEBAR =====
   const menuItems = [
     { name: "Dashboard", href: "/admin", icon: <BarChart3 className="w-5 h-5" /> },
     ...(user?.role === "superadmin"
@@ -225,21 +289,27 @@ export default function AdminLayout({ children }) {
       : []),
   ];
 
+  // ===== RENDER =====
   return (
     <div className="min-h-screen bg-slate-50 flex">
+      {/* Overlay sidebar mobile */}
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-[60] lg:hidden backdrop-blur-sm"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
+
+      {/* Sidebar */}
       <aside
         className={`w-64 bg-slate-900 text-slate-300 flex flex-col fixed h-full z-[70] transition-transform duration-300 ease-in-out lg:translate-x-0 ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div className="p-6 border-b border-slate-800">
-          <h1 className="text-xl font-bold text-white uppercase tracking-wider">Ncek Admin</h1>
+          <h1 className="text-xl font-bold text-white uppercase tracking-wider">
+            Ncek Admin
+          </h1>
         </div>
         <nav className="flex-1 p-4 space-y-2">
           {menuItems.map((item) => (
@@ -247,7 +317,9 @@ export default function AdminLayout({ children }) {
               key={item.href}
               href={item.href}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                pathname === item.href ? "bg-blue-600 text-white" : "hover:bg-slate-800 hover:text-white"
+                pathname === item.href
+                  ? "bg-blue-600 text-white"
+                  : "hover:bg-slate-800 hover:text-white"
               }`}
               onClick={() => setIsSidebarOpen(false)}
             >
@@ -257,12 +329,17 @@ export default function AdminLayout({ children }) {
           ))}
         </nav>
         <div className="p-4 border-t border-slate-800">
-          <Link href="/" className="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white">
+          <Link
+            href="/"
+            className="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white"
+          >
             <LogOut className="w-5 h-5" />
             <span>Keluar ke Web</span>
           </Link>
         </div>
       </aside>
+
+      {/* Konten utama */}
       <div className="flex-1 lg:ml-64 flex flex-col min-w-0">
         <Suspense
           fallback={

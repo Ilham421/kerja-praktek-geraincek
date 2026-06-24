@@ -15,7 +15,7 @@ import {
   ClipboardList,
 } from "lucide-react";
 
-// ===== KOMPONEN HEADER (tidak berubah) =====
+// ===== KOMPONEN HEADER =====
 function AdminHeader({
   user,
   isProfileOpen,
@@ -28,7 +28,6 @@ function AdminHeader({
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Menampilkan notifikasi dari query parameter
   useEffect(() => {
     if (searchParams.get("accessDenied") === "true") {
       Swal.fire({
@@ -178,7 +177,7 @@ export default function AdminLayout({ children }) {
           // Hapus cookie
           await fetch("/api/auth/logout", { method: "POST" });
           if (isActive) {
-            clearInterval(intervalId); // hentikan polling
+            clearInterval(intervalId);
             if (data.deleted) {
               router.push("/login?deleted=true");
             } else {
@@ -186,12 +185,11 @@ export default function AdminLayout({ children }) {
             }
           }
         } else {
-          // Jika response ok, update user (bisa jadi data berubah)
           const data = await res.json();
           if (isActive) setUser(data);
         }
       } catch (error) {
-        // Biarkan polling tetap berjalan, jangan redirect karena bisa jadi masalah jaringan
+        // Biarkan polling tetap berjalan
         console.warn("Polling user gagal:", error);
       }
     };
@@ -225,7 +223,7 @@ export default function AdminLayout({ children }) {
     }
   };
 
-  // ===== FUNGSI SETTINGS (ubah profil) =====
+  // ===== FUNGSI SETTINGS =====
   const handleSettings = async () => {
     const { value: formValues } = await Swal.fire({
       title: "Pengaturan Profil",

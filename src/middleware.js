@@ -40,7 +40,6 @@ export async function middleware(request) {
         );
       }
 
-      // 🔧 PERBAIKAN: Gunakan base URL dari env, fallback ke origin
       try {
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || request.nextUrl.origin;
         const res = await fetch(`${baseUrl}/api/auth/me`, {

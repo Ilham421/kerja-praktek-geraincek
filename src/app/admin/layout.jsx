@@ -144,7 +144,8 @@ export default function AdminLayout({ children }) {
             if (data.deleted) {
               router.push("/login?deleted=true");
             } else {
-              router.push("/login?sessionExpired=true");
+              // Token invalid/expired atau tidak ada → redirect polos
+              router.push("/login");
             }
           }
           return;
@@ -181,7 +182,7 @@ export default function AdminLayout({ children }) {
             if (data.deleted) {
               router.push("/login?deleted=true");
             } else {
-              router.push("/login?sessionExpired=true");
+              router.push("/login");
             }
           }
         } else {
@@ -254,7 +255,7 @@ export default function AdminLayout({ children }) {
             await Swal.fire(
               "Berhasil!",
               "Password diubah. Silakan login kembali.",
-              "success"
+              "success",
             );
             handleLogout(false);
           } else {
@@ -276,13 +277,33 @@ export default function AdminLayout({ children }) {
 
   // ===== MENU SIDEBAR =====
   const menuItems = [
-    { name: "Dashboard", href: "/admin", icon: <BarChart3 className="w-5 h-5" /> },
+    {
+      name: "Dashboard",
+      href: "/admin",
+      icon: <BarChart3 className="w-5 h-5" />,
+    },
     ...(user?.role === "superadmin"
       ? [
-          { name: "Pesan Masuk", href: "/admin/contacts", icon: <Mail className="w-5 h-5" /> },
-          { name: "Manajemen User", href: "/admin/users", icon: <Users className="w-5 h-5" /> },
-          { name: "Laporan", href: "/admin/laporan", icon: <TrendingUp className="w-5 h-5" /> },
-          { name: "Log Aktivitas", href: "/admin/log", icon: <ClipboardList className="w-5 h-5" /> },
+          {
+            name: "Pesan Masuk",
+            href: "/admin/contacts",
+            icon: <Mail className="w-5 h-5" />,
+          },
+          {
+            name: "Manajemen User",
+            href: "/admin/users",
+            icon: <Users className="w-5 h-5" />,
+          },
+          {
+            name: "Laporan",
+            href: "/admin/laporan",
+            icon: <TrendingUp className="w-5 h-5" />,
+          },
+          {
+            name: "Log Aktivitas",
+            href: "/admin/log",
+            icon: <ClipboardList className="w-5 h-5" />,
+          },
         ]
       : []),
   ];
